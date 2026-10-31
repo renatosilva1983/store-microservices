@@ -1,6 +1,48 @@
-@Catalog.Api_HostAddress = http://localhost:5086
+@baseUrl = http://localhost:5086
+@electronics = 8c5d2b52-8a2b-4f4e-9d6a-1b8f0c3e2a01
 
-GET {{Catalog.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Listar categorias (vem com 3 do seed)
+GET {{baseUrl}}/api/categories
 
-###
+### Criar produto
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Notebook Pro 14",
+  "description": "16 GB de RAM, SSD de 512 GB",
+  "sku": "nb-pro-14",
+  "price": 7499.90,
+  "initialStock": 15,
+  "categoryId": "{{electronics}}"
+}
+
+### Criar com SKU repetido → 409 Conflict
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Outro notebook",
+  "sku": "NB-PRO-14",
+  "price": 100,
+  "initialStock": 1,
+  "categoryId": "{{electronics}}"
+}
+
+### Criar com dados inválidos → 400 com erros por campo (ValidationDecorator)
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "sku": "x",
+  "price": -1,
+  "initialStock": -1,
+  "categoryId": "00000000-0000-0000-0000-000000000000"
+}
+
+### Listar com filtro e paginação
+GET {{baseUrl}}/api/products?name=note&page=1&pageSize=10
+
+### Excluir categoria com produtos → 409 Conflict
+DELETE {{baseUrl}}/api/categories/{{electronics}}
