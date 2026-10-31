@@ -42,7 +42,7 @@ Ao terminar CADA tarefa, encerre com uma seção curta:
 - YARP (gateway), MassTransit + RabbitMQ, `Microsoft.Extensions.Http.Resilience` (Polly), FluentValidation, Scrutor, Serilog.
 - Testes: xUnit, NSubstitute, Shouldly; Testcontainers (opcional).
 - **Não usar:** MediatR, AutoMapper, FluentAssertions 8+, Moq (motivos no ADR-12 e ADR-22).
-- Angular 20+ standalone, signals, novo control flow, `inject()`, SCSS.
+- Angular 22 (versão mais recente; exige Node ^22.22.3 ou ^24.15.0 e TypeScript 6.0) standalone, signals, novo control flow, `inject()`, SCSS.
 
 ## Regras de arquitetura (não violar)
 - Dependências: `Api → Application + Infrastructure`; `Infrastructure → Application → Domain`; `Domain` não referencia nada.
