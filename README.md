@@ -81,7 +81,29 @@ store-microservices/
 Nunca cortar: Fase 1 completa e o CRUD no Angular — são o núcleo do projeto.
 
 ## Como rodar
-```bash
-docker compose up -d
-# Gateway: http://localhost:5000  |  Front: cd src/Web/store-web && npm start  →  http://localhost:4200
+
+### Pré-requisitos
+.NET 10 SDK, Docker Desktop e a ferramenta do EF Core (`dotnet tool install -g dotnet-ef`).
+
+### Primeira vez: gerar a migration inicial
+```powershell
+dotnet ef migrations add InitialCreate -p src/Services/Catalog/Catalog.Infrastructure -s src/Services/Catalog/Catalog.Api -o Persistence/Migrations
+```
+
+### Opção 1 — tudo no Docker
+```powershell
+docker compose up -d --build
+```
+- API: http://localhost:5101/scalar (documentação interativa)
+- As migrations e o seed de categorias são aplicados na inicialização.
+
+### Opção 2 — API no Visual Studio (para debugar)
+```powershell
+docker compose up -d catalog-db
+```
+Depois, F5 no projeto `Catalog.Api`: abre o Scalar em https://localhost:7221/scalar.
+
+### Testes
+```powershell
+dotnet test
 ```
