@@ -1,13 +1,13 @@
 # store-microservices
 
-Loja de estudo em **microsserviços .NET 10 + Angular 20**, com Clean Architecture, DDD, CQRS, mensageria e API Gateway.
+Loja de estudo em **microsserviços .NET 10 + Angular 22**, com Clean Architecture, DDD, CQRS, mensageria e API Gateway.
 Decisões e justificativas: [docs/decisoes-arquitetura.md](docs/decisoes-arquitetura.md).
 
 ## Arquitetura
 
 ```mermaid
 flowchart LR
-    W[Angular 20] --> G[Gateway YARP]
+    W[Angular 22] --> G[Gateway YARP]
     G --> C[Catalog.Api]
     G --> O[Ordering.Api]
     G --> I[Identity.Api]

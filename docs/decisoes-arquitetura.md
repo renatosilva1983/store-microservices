@@ -11,7 +11,7 @@
 > "É uma loja dividida em microsserviços por contexto de negócio (DDD): Catálogo, Pedidos e Identidade. Cada serviço segue Clean Architecture e tem seu próprio banco. O front em Angular fala só com um API Gateway (YARP). Entre os serviços, uso HTTP com resiliência (Polly) quando preciso de resposta imediata e eventos no RabbitMQ (MassTransit) quando posso trabalhar com consistência eventual. Tudo sobe com docker-compose."
 
 ```
-Angular 20 ──► Gateway (YARP) ──┬──► Catalog.Api ──► PostgreSQL (catalog)
+Angular 22 ──► Gateway (YARP) ──┬──► Catalog.Api ──► PostgreSQL (catalog)
                                 ├──► Ordering.Api ──► PostgreSQL (ordering)
                                 └──► Identity.Api (JWT)
 Ordering.Api ──HTTP + Polly──► Catalog.Api      (consulta preço/produto)
@@ -81,8 +81,8 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 
 ### ADR-10 · Versões
 - **.NET 10 (LTS)** — versão de suporte longo atual; o .NET 8 sai de suporte em nov/2026. C# moderno (records, `init`, pattern matching, primary constructors) cobre e supera o C# 9 da vaga.
-- **Angular 20+ (estável mais recente)** — a vaga exige 20+.
-- **Frase:** "Escolhi a versão LTS do .NET por estabilidade e suporte."
+- **Angular 22 (versão mais recente)** — a vaga exige 20+; usar a mais recente mostra atualização. Exige Node ^22.22.3, ^24.15.0 ou ^26 e TypeScript 6.0. Criação sem depender do CLI global: `npx @angular/cli@22 new store-web`. De 20 para 22 os pilares são os mesmos (standalone, signals, novo control flow).
+- **Frase:** "No back, a versão LTS do .NET por estabilidade e suporte; no front, o Angular mais recente, que atende ao 20+ da vaga com os mesmos pilares: standalone, signals e novo control flow."
 
 ---
 
@@ -154,11 +154,11 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 
 ---
 
-## PARTE 3 — Front-end (Angular 20+)
+## PARTE 3 — Front-end (Angular 22)
 
 ### ADR-24 · Angular moderno
 - **Standalone components** (sem NgModule), **Signals** (`signal`, `computed`, `input()`, `output()`), **novo control flow** (`@if`, `@for ... track`), `inject()`, lazy loading com `loadComponent`, **zoneless** se estável.
-- **Porquê:** é o Angular atual e o que a vaga (20+) espera ver.
+- **Porquê:** é o Angular atual (22) e cobre o que a vaga (20+) espera ver.
 
 ### ADR-25 · Organização e padrões no front
 - **Feature folders** (`features/catalog`, `features/orders`) + `core` (interceptors, guards, auth) + `shared` (componentes reutilizáveis).
