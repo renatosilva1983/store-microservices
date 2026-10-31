@@ -1,0 +1,39 @@
+# Sobe o sistema inteiro com: docker compose up -d --build
+# Fase 1: banco do Catálogo + Catalog.Api.
+
+services:
+  catalog-db:
+    image: postgres:17-alpine
+    container_name: catalog-db
+    environment:
+      POSTGRES_DB: catalog
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - catalog-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d catalog"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  catalog-api:
+    build:
+      context: .
+      dockerfile: src/Services/Catalog/Catalog.Api/Dockerfile
+    container_name: catalog-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__CatalogDb: "Host=catalog-db;Port=5432;Database=catalog;Username=postgres;Password=postgres"
+      Database__ApplyMigrationsOnStartup: "true"
+    ports:
+      - "5101:8080"
+    depends_on:
+      catalog-db:
+        condition: service_healthy
+
+volumes:
+  catalog-db-data:
