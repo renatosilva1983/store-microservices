@@ -1,0 +1,19 @@
+# Quebras de linha normalizadas para LF no repositório
+* text=auto
+
+# Arquivos do Visual Studio mantêm CRLF no checkout
+*.sln    text eol=crlf
+*.slnx   text eol=crlf
+*.csproj text eol=crlf
+*.props  text eol=crlf
+
+# Scripts que rodam em containers Linux sempre com LF
+*.sh     text eol=lf
+Dockerfile text eol=lf
+
+# Binários
+*.png  binary
+*.jpg  binary
+*.ico  binary
+*.dll  binary
+*.exe  binary

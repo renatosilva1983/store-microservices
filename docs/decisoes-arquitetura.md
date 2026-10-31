@@ -222,6 +222,16 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 
 ---
 
+## PARTE 5 — Processo
+
+### ADR-33 · Git Flow simplificado + SemVer por fase
+- **Escolha:** `main` (estável, com tags) e `develop` (integração); branches `feature/`, `bugfix/`, `release/` e `hotfix/` nomeadas `tipo/fN-escopo-descricao`. Cada fase fecha numa release (`0.1.0`, `0.2.0`, `1.0.0`...). Pull Request com modelo; CHANGELOG no formato Keep a Changelog. Detalhes em `docs/fluxo-git.md`.
+- **Porquê:** o projeto tem versões numeradas por fase, e o Git Flow separa bem o que está em construção do que está publicado; o histórico conta a evolução do projeto para quem o avalia.
+- **Descartado:** GitHub Flow / trunk-based — mais simples e preferidos com deploy contínuo, mas não diferenciam release e hotfix, que aqui são parte do exercício.
+- **Frase:** "Usei Git Flow: features e bugfixes saem da develop, cada fase fecha numa release com versão semântica e tag na main, e correções urgentes vão por hotfix direto da main, voltando também para a develop. Com deploy contínuo eu iria de trunk-based."
+
+---
+
 ## Simplificações conscientes (diga antes que perguntem)
 - Identity com usuários fixos (em produção: Keycloak/Entra ID/IdentityServer).
 - Sem Kubernetes, service discovery ou tracing distribuído (OpenTelemetry seria o próximo passo).
