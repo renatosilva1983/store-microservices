@@ -9,8 +9,8 @@ Mesmo formato da Fase 1: por onde a requisição passa, onde colocar breakpoints
    dotnet ef migrations add InitialCreate -p src/Services/Ordering/Ordering.Infrastructure -s src/Services/Ordering/Ordering.Api -o Persistence/Migrations
    ```
 2. Suba só os bancos: `docker compose up -d catalog-db ordering-db`
-3. No Visual Studio: botão direito na solution → **Configure Startup Projects** → **Multiple startup projects** → `Catalog.Api`, `Ordering.Api` e `Store.Gateway` como **Start**. F5 sobe os três; dá para colocar breakpoint em qualquer um.
-4. Front: `cd src/Web/store-web`, `npm install` (primeira vez) e `npm start` → http://localhost:4200
+3. Back-end: abra `store-server.slnx`, escolha o perfil **"Back-end (Gateway + Catalog + Ordering)"** ao lado do botão Iniciar e F5. Sobem os três; dá para colocar breakpoint em qualquer um.
+4. Front: abra `src/Web/store-web/store-web.slnx` em outra janela do Visual Studio e F5 (na primeira vez o build faz o `npm install`). Os breakpoints nos `.ts` funcionam no próprio VS.
 
 | Processo | Endereço |
 |---|---|

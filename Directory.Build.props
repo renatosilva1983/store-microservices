@@ -1,6 +1,7 @@
 <Project>
-  <!-- Configurações comuns a todos os projetos .NET da solução. -->
-  <PropertyGroup>
+  <!-- Configurações comuns aos projetos .NET (.csproj).
+       O projeto do Angular (.esproj) também herda este arquivo, por isso a condição. -->
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
