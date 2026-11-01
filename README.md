@@ -85,10 +85,8 @@ Nunca cortar: Fase 1 completa e o CRUD no Angular — são o núcleo do projeto.
 ### Pré-requisitos
 .NET 10 SDK, Docker Desktop e a ferramenta do EF Core (`dotnet tool install -g dotnet-ef`).
 
-### Primeira vez: gerar a migration inicial
-```powershell
-dotnet ef migrations add InitialCreate -p src/Services/Catalog/Catalog.Infrastructure -s src/Services/Catalog/Catalog.Api -o Persistence/Migrations
-```
+### Banco de dados
+A migration inicial já está no repositório e é aplicada automaticamente quando a API sobe em Development.
 
 ### Opção 1 — tudo no Docker
 ```powershell
