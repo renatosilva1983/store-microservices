@@ -24,6 +24,14 @@ export function describeError(error: HttpErrorResponse): string {
   }
 
   const problem = toProblemDetails(error);
+
+  if (error.status === 401) {
+    return problem?.detail ?? 'Faça login para continuar.';
+  }
+  if (error.status === 403) {
+    return 'Você não tem permissão para esta ação.';
+  }
+
   if (problem?.errors) {
     const first = Object.values(problem.errors).flat()[0];
     return first ? `Dados inválidos: ${first}` : 'Dados inválidos.';
