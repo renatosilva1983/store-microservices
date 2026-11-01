@@ -83,28 +83,45 @@ Nunca cortar: Fase 1 completa e o CRUD no Angular — são o núcleo do teste.
 ## Como rodar
 
 ### Pré-requisitos
-.NET 10 SDK, Docker Desktop e a ferramenta do EF Core (`dotnet tool install -g dotnet-ef`).
+.NET 10 SDK, Docker Desktop, Node 24 LTS (ou 22.22+) e a ferramenta do EF Core (`dotnet tool install -g dotnet-ef`).
 
-### Primeira vez: gerar a migration inicial
+### Primeira vez: gerar as migrations
 ```powershell
 dotnet ef migrations add InitialCreate -p src/Services/Catalog/Catalog.Infrastructure -s src/Services/Catalog/Catalog.Api -o Persistence/Migrations
+dotnet ef migrations add InitialCreate -p src/Services/Ordering/Ordering.Infrastructure -s src/Services/Ordering/Ordering.Api -o Persistence/Migrations
 ```
 
-### Opção 1 — tudo no Docker
+### Opção 1 — back-end inteiro no Docker
 ```powershell
 docker compose up -d --build
 ```
-- API: http://localhost:5101/scalar (documentação interativa)
-- As migrations e o seed de categorias são aplicados na inicialização.
+| Serviço | Endereço |
+|---|---|
+| Gateway (entrada do front) | http://localhost:5000 |
+| Catalog.Api | http://localhost:5101/scalar |
+| Ordering.Api | http://localhost:5102/scalar |
 
-### Opção 2 — API no Visual Studio (para debugar)
+As migrations e o seed de categorias são aplicados na inicialização.
+
+### Opção 2 — no Visual Studio (para debugar)
 ```powershell
-docker compose up -d catalog-db
+docker compose up -d catalog-db ordering-db
 ```
-Depois, F5 no projeto `Catalog.Api`: abre o Scalar em https://localhost:7221/scalar.
-Roteiro de estudo com breakpoints: [docs/guia-estudo-fase1.md](docs/guia-estudo-fase1.md).
+Solution → *Configure Startup Projects* → *Multiple startup projects*: `Catalog.Api`, `Ordering.Api` e `Store.Gateway`. Depois, F5.
+
+### Front-end
+```powershell
+cd src/Web/store-web
+npm install
+npm start
+```
+Abre em http://localhost:4200 e conversa com o Gateway em http://localhost:5000.
 
 ### Testes
 ```powershell
 dotnet test
 ```
+
+### Roteiros de estudo
+- [Fase 1 — Catálogo](docs/guia-estudo-fase1.md)
+- [Fase 2 — Gateway, Pedidos e Angular](docs/guia-estudo-fase2.md)
