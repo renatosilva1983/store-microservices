@@ -9,5 +9,8 @@ public enum ErrorType
     Failure,
     Validation,
     NotFound,
-    Conflict
+    Conflict,
+
+    /// <summary>Uma dependência externa (outro serviço) está indisponível.</summary>
+    Unavailable
 }
