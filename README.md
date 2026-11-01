@@ -92,10 +92,12 @@ As APIs leem a variável de ambiente **`POSTGRES_CONNECTION`** com host, porta, 
 ```
 Cada serviço completa com o próprio banco (`catalog`, `ordering`), definido em `Database:Name` no appsettings. Reabra terminal e Visual Studio depois de criar a variável.
 
-### Primeira vez: gerar as migrations
+
+### Banco de dados (migrations)
+As migrations ficam no repositório e são aplicadas automaticamente quando cada API sobe em Development (criam os bancos `catalog` e `ordering`).
+Ao mudar o modelo de um serviço, gere uma nova:
 ```powershell
-dotnet ef migrations add InitialCreate -p src/Services/Catalog/Catalog.Infrastructure -s src/Services/Catalog/Catalog.Api -o Persistence/Migrations
-dotnet ef migrations add InitialCreate -p src/Services/Ordering/Ordering.Infrastructure -s src/Services/Ordering/Ordering.Api -o Persistence/Migrations
+dotnet ef migrations add <Nome> -p src/Services/<Servico>/<Servico>.Infrastructure -s src/Services/<Servico>/<Servico>.Api -o Persistence/Migrations
 ```
 
 ### Opção 1 — back-end inteiro no Docker
