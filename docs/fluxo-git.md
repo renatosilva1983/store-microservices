@@ -41,15 +41,19 @@ Modelo: **Git Flow simplificado** (ADR-33), com versionamento semântico por fas
 - `feature/f1-catalog-docker`
 
 ### Fase 2 → `release/0.2.0`
+- `feature/f2-central-package-management`
+- `feature/f2-building-blocks-api`
+- `feature/f2-ordering-domain`
+- `feature/f2-ordering-shipping-strategy`
+- `feature/f2-ordering-application`
+- `feature/f2-ordering-infrastructure`
+- `feature/f2-ordering-catalog-adapter`
+- `feature/f2-ordering-api`
 - `feature/f2-gateway-yarp`
 - `feature/f2-web-setup`
 - `feature/f2-web-catalog-list`
 - `feature/f2-web-catalog-form`
-- `feature/f2-ordering-domain`
-- `feature/f2-ordering-application`
-- `feature/f2-ordering-catalog-adapter`
-- `feature/f2-ordering-shipping-strategy`
-- `feature/f2-ordering-api`
+- `feature/f2-docker-compose`
 
 ### Fase 3 → `release/1.0.0`
 - `feature/f3-messaging-rabbitmq`
