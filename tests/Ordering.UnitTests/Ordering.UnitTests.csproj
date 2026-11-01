@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Services\Ordering\Ordering.Domain\Ordering.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Services\Ordering\Ordering.Application\Ordering.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
