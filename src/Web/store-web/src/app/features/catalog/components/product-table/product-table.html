@@ -1,0 +1,38 @@
+<table>
+  <thead>
+    <tr>
+      <th>Produto</th>
+      <th class="hide-mobile">SKU</th>
+      <th class="hide-mobile">Categoria</th>
+      <th class="number">Preço</th>
+      <th class="number">Estoque</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (product of products(); track product.id) {
+      <tr>
+        <td>
+          <strong>{{ product.name }}</strong>
+          @if (product.description) {
+            <div class="muted">{{ product.description }}</div>
+          }
+        </td>
+        <td class="hide-mobile">{{ product.sku }}</td>
+        <td class="hide-mobile">{{ product.categoryName }}</td>
+        <td class="number">{{ product.price | currency: product.currency }}</td>
+        <td class="number">{{ product.stockQuantity }}</td>
+        <td>
+          <div class="actions">
+            <button type="button" (click)="edit.emit(product)">Editar</button>
+            <button type="button" class="danger" (click)="remove.emit(product)">Excluir</button>
+          </div>
+        </td>
+      </tr>
+    } @empty {
+      <tr>
+        <td colspan="6" class="empty">Nenhum produto encontrado.</td>
+      </tr>
+    }
+  </tbody>
+</table>

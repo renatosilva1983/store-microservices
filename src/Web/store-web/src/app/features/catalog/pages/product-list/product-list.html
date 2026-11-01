@@ -1,0 +1,30 @@
+<section class="card">
+  <div class="page-header">
+    <h1>Produtos</h1>
+    <a class="button primary" routerLink="new">Novo produto</a>
+  </div>
+
+  <div class="toolbar">
+    <input type="search" placeholder="Buscar por nome…" [formControl]="search" aria-label="Buscar por nome" />
+
+    <select [value]="facade.filter().categoryId" (change)="onCategoryChange($event)" aria-label="Filtrar por categoria">
+      <option value="">Todas as categorias</option>
+      @for (category of facade.categories(); track category.id) {
+        <option [value]="category.id">{{ category.name }}</option>
+      }
+    </select>
+
+    @if (facade.loading()) {
+      <span class="muted">Carregando…</span>
+    }
+  </div>
+
+  <app-product-table [products]="facade.products()" (edit)="onEdit($event)" (remove)="onRemove($event)" />
+
+  <app-pagination
+    [page]="facade.page()"
+    [totalPages]="facade.totalPages()"
+    [totalCount]="facade.totalCount()"
+    (pageChange)="facade.goToPage($event)"
+  />
+</section>
