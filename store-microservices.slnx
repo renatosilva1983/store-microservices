@@ -13,6 +13,7 @@
     <Project Path="src/Services/Catalog/Catalog.Infrastructure/Catalog.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Services/Ordering/">
+    <Project Path="src/Services/Ordering/Ordering.Api/Ordering.Api.csproj" />
     <Project Path="src/Services/Ordering/Ordering.Application/Ordering.Application.csproj" />
     <Project Path="src/Services/Ordering/Ordering.Domain/Ordering.Domain.csproj" />
     <Project Path="src/Services/Ordering/Ordering.Infrastructure/Ordering.Infrastructure.csproj" />
