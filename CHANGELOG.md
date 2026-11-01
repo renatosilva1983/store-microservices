@@ -11,4 +11,5 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 - Documentação: especificação por fase (README), decisões de arquitetura (ADRs) e fluxo de Git.
 
 ### Alterado
+- Solutions separadas no Visual Studio: `store-server.slnx` (back, com perfil de execução multiprojeto) e `src/Web/store-web/store-web.slnx` (Angular via `.esproj`).
 - Versões NuGet centralizadas em `Directory.Packages.props`; `ApiController` movido para `BuildingBlocks.Api`.
