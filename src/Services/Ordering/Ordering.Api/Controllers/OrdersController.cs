@@ -1,6 +1,7 @@
 using BuildingBlocks.Api.Controllers;
 using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Application.Pagination;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ordering.Api.Contracts;
 using Ordering.Application.Orders;
@@ -10,6 +11,8 @@ using Ordering.Application.Orders.Queries;
 
 namespace Ordering.Api.Controllers;
 
+// Todo o serviço de pedidos exige login.
+[Authorize]
 [Route("api/orders")]
 public sealed class OrdersController : ApiController
 {

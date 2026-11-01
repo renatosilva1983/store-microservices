@@ -1,9 +1,14 @@
 [
   {
-    "Name": "Back-end (Gateway + Catalog + Ordering)",
+    "Name": "Back-end (Gateway + Identity + Catalog + Ordering)",
     "Projects": [
       {
         "Path": "src\\Gateway\\Store.Gateway\\Store.Gateway.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "src\\Services\\Identity\\Identity.Api\\Identity.Api.csproj",
         "Action": "Start",
         "DebugTarget": "http"
       },
