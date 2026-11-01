@@ -2,18 +2,13 @@
 
 Projeto de estudo do Renato para o teste prático da LUZA Group (Fullstack C#/.NET + Angular).
 Objetivo duplo: **aprender e conseguir justificar** cada escolha de arquitetura e design pattern.
-As decisões estão em `docs/decisoes-arquitetura.md` (ADR-01 a ADR-25). Leia esse arquivo antes de qualquer tarefa.
+As decisões estão em `docs/decisoes-arquitetura.md` (ADR-01 a ADR-33). Leia esse arquivo antes de qualquer tarefa.
 
-## Regra nº 1: o Renato codifica
-Este projeto é treino para um teste prático em que o Renato vai programar sozinho.
-- **Núcleo (Renato escreve):** domínio, application (handlers, validações, DTOs), controllers, EF Core (DbContext, configurações, repositórios), testes unitários e o front Angular.
-- **Infra (Claude pode escrever se o Renato pedir):** Dockerfiles, docker-compose, YARP, MassTransit/RabbitMQ, CI, Terraform.
-- No núcleo, **não escreva o código**. Para cada passo:
-  1. Explique o objetivo e o padrão envolvido (ADR).
-  2. Diga quais arquivos/classes criar e o que cada um deve ter — sem entregar a implementação.
-  3. Espere o Renato escrever. Depois **revise**: arquitetura, Clean Code, nomes, async/CancellationToken, testes. Aponte o problema e o porquê; dê a correção só se ele pedir ou após duas tentativas.
-- Se ele travar, dê dicas em níveis: (1) pista conceitual, (2) assinatura/esqueleto, (3) trecho mínimo.
-- Pode criar arquivos de configuração triviais (.gitignore, global.json, Directory.Build.props) se ele pedir.
+## Regra nº 1: modo estudo
+Decisão de 31/10/2026, por causa do prazo do teste: o Renato estuda o projeto **analisando e debugando** o código.
+- O Claude escreve o código de cada fase em branches `feature/*` (ver `docs/fluxo-git.md`), com commits pequenos e mensagens convencionais.
+- Cada entrega vem com o objetivo, os padrões usados (ADR) e onde colocar breakpoints para estudar (`docs/guia-estudo-*.md`).
+- Dúvidas do Renato: responder ligando o trecho de código ao conceito e à pergunta de entrevista correspondente.
 
 ## Modo professor
 Ao terminar CADA tarefa, encerre com uma seção curta:
@@ -32,8 +27,8 @@ Ao terminar CADA tarefa, encerre com uma seção curta:
 ## Fluxo de trabalho (SDD)
 1. Ler a fase atual em `README.md` (especificação).
 2. Propor o plano da tarefa (arquivos e passos) e esperar o "ok".
-3. Guiar o Renato passo a passo (Regra nº 1); ele compila e roda os testes a cada passo; você revisa.
-4. Sugerir o commit com mensagem convencional (`feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:`) — o Renato faz o commit.
+3. Implementar em passos pequenos; compilar e rodar os testes a cada passo.
+4. Commit com mensagem convencional (`feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:`) em branch por funcionalidade; merge na `develop`.
 5. Modo professor (acima).
 
 ## Stack
@@ -42,7 +37,7 @@ Ao terminar CADA tarefa, encerre com uma seção curta:
 - YARP (gateway), MassTransit + RabbitMQ, `Microsoft.Extensions.Http.Resilience` (Polly), FluentValidation, Scrutor, Serilog.
 - Testes: xUnit, NSubstitute, Shouldly; Testcontainers (opcional).
 - **Não usar:** MediatR, AutoMapper, FluentAssertions 8+, Moq (motivos no ADR-12 e ADR-22).
-- Angular 20+ standalone, signals, novo control flow, `inject()`, SCSS.
+- Angular 22 (versão mais recente; exige Node ^22.22.3 ou ^24.15.0 e TypeScript 6.0) standalone, signals, novo control flow, `inject()`, SCSS.
 
 ## Regras de arquitetura (não violar)
 - Dependências: `Api → Application + Infrastructure`; `Infrastructure → Application → Domain`; `Domain` não referencia nada.
