@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ordering.Application.Abstractions;
+using Ordering.Infrastructure.Catalog;
 using Ordering.Infrastructure.Persistence;
 using Ordering.Infrastructure.Persistence.Queries;
 using Ordering.Infrastructure.Persistence.Repositories;
@@ -24,6 +25,9 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<OrderingDbContext>());
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IOrderQueries, OrderQueries>();
+
+        // Integração com o Catálogo (HTTP + resiliência).
+        services.AddCatalogClient(configuration);
 
         return services;
     }
