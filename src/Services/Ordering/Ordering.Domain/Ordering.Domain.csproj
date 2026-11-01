@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Domínio do Pedido: sem dependências, como o do Catálogo. -->
+
+</Project>
