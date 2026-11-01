@@ -1,3 +1,4 @@
+using BuildingBlocks.Messaging;
 using Catalog.Application.Abstractions;
 using Catalog.Domain.Categories;
 using Catalog.Domain.Products;
@@ -24,5 +25,8 @@ public sealed class CatalogDbContext(DbContextOptions<CatalogDbContext> options)
 
         // Mapeamento fora das entidades (IEntityTypeConfiguration): o Domain não conhece o EF.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalogDbContext).Assembly);
+
+        // Tabelas do Outbox/Inbox do MassTransit (Inbox = consumidor idempotente).
+        modelBuilder.AddMessagingTables();
     }
 }
