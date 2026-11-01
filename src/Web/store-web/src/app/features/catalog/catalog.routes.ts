@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '../../core/auth/auth.guard';
 import { ProductsFacade } from './data/products.facade';
 
 export const CATALOG_ROUTES: Routes = [
@@ -14,12 +15,14 @@ export const CATALOG_ROUTES: Routes = [
       },
       {
         path: 'new',
+        canActivate: [authGuard],
         loadComponent: () => import('./pages/product-form/product-form').then((m) => m.ProductForm),
         title: 'Novo produto',
       },
       {
         // :id chega no componente como input() graças ao withComponentInputBinding().
         path: ':id/edit',
+        canActivate: [authGuard],
         loadComponent: () => import('./pages/product-form/product-form').then((m) => m.ProductForm),
         title: 'Editar produto',
       },
