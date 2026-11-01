@@ -1,0 +1,13 @@
+@identity = http://localhost:5088
+
+### Login (usuários de demonstração em appsettings.Development.json)
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@store.dev", "password": "Store@2026" }
+
+### Senha errada → 401 (mesma mensagem para e-mail inexistente)
+POST {{identity}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@store.dev", "password": "errada" }
