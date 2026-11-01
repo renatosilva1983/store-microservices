@@ -1,3 +1,4 @@
+using BuildingBlocks.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Ordering.Application.Abstractions;
 using Ordering.Domain.Orders;
@@ -19,5 +20,8 @@ public sealed class OrderingDbContext(DbContextOptions<OrderingDbContext> option
     {
         modelBuilder.HasDefaultSchema(Schema);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrderingDbContext).Assembly);
+
+        // Tabelas do Outbox/Inbox do MassTransit, no mesmo banco e na mesma transação do pedido.
+        modelBuilder.AddMessagingTables();
     }
 }
