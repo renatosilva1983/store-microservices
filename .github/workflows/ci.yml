@@ -1,0 +1,56 @@
+# Integração contínua (ADR-23): todo push e PR em main/develop compila e testa back e front.
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  backend:
+    name: Back-end (.NET)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore store-server.slnx
+
+      - name: Build
+        run: dotnet build store-server.slnx --no-restore -c Release
+
+      - name: Test
+        run: dotnet test store-server.slnx --no-build -c Release --logger "trx;LogFileName=results.trx"
+
+      - name: Publicar resultado dos testes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/TestResults/*.trx'
+
+  frontend:
+    name: Front-end (Angular)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/Web/store-web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: src/Web/store-web/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Build de produção
+        run: npm run build
