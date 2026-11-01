@@ -12,6 +12,17 @@ export const CATALOG_ROUTES: Routes = [
         loadComponent: () => import('./pages/product-list/product-list').then((m) => m.ProductList),
         title: 'Produtos',
       },
+      {
+        path: 'new',
+        loadComponent: () => import('./pages/product-form/product-form').then((m) => m.ProductForm),
+        title: 'Novo produto',
+      },
+      {
+        // :id chega no componente como input() graças ao withComponentInputBinding().
+        path: ':id/edit',
+        loadComponent: () => import('./pages/product-form/product-form').then((m) => m.ProductForm),
+        title: 'Editar produto',
+      },
     ],
   },
 ];
