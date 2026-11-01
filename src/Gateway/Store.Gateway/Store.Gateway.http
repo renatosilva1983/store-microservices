@@ -1,0 +1,10 @@
+@gateway = http://localhost:5000
+
+### O front só conhece este endereço. O Gateway reescreve /api/catalog/products → /api/products no Catalog.Api
+GET {{gateway}}/api/catalog/products?page=1&pageSize=5
+
+### Categorias pelo Gateway
+GET {{gateway}}/api/catalog/categories
+
+### Pedidos pelo Gateway (caminho repassado sem mudança)
+GET {{gateway}}/api/orders
