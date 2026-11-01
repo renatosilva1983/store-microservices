@@ -1,3 +1,4 @@
+using BuildingBlocks.Api.Controllers;
 using BuildingBlocks.Application.Messaging;
 using Catalog.Api.Contracts;
 using Catalog.Application.Categories;

@@ -1,3 +1,4 @@
+using BuildingBlocks.Api.Controllers;
 using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Application.Pagination;
 using Catalog.Api.Contracts;

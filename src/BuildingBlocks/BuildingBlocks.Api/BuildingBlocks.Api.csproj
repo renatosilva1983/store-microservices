@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Peças HTTP comuns a todas as APIs (borda): tradução Result → ProblemDetails. -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+  </ItemGroup>
+
+</Project>
