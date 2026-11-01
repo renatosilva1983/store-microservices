@@ -1,3 +1,4 @@
+using BuildingBlocks.Api.Authentication;
 using BuildingBlocks.Api.Observability;
 using Ordering.Api.ErrorHandling;
 using Ordering.Application;
@@ -12,6 +13,7 @@ builder.AddServiceDefaults();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -28,6 +30,8 @@ if (app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup"))
 
 app.UseServiceDefaults();
 app.UseExceptionHandler();
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
