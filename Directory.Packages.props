@@ -6,7 +6,6 @@
   -->
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
   </PropertyGroup>
 
   <ItemGroup Label="Application">
@@ -27,9 +26,8 @@
   <ItemGroup Label="Web">
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.18.7" />
-    <!-- Versões novas da Fase 2: flutuantes até o primeiro restore; depois fixar a versão resolvida. -->
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.*" />
-    <PackageVersion Include="Yarp.ReverseProxy" Version="2.*" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup Label="Tests">
