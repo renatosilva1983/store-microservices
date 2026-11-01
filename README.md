@@ -83,7 +83,14 @@ Nunca cortar: Fase 1 completa e o CRUD no Angular — são o núcleo do teste.
 ## Como rodar
 
 ### Pré-requisitos
-.NET 10 SDK, Docker Desktop, Node 24 LTS (ou 22.22+) e a ferramenta do EF Core (`dotnet tool install -g dotnet-ef`).
+.NET 10 SDK, Node 24 LTS (ou 22.22+), a ferramenta do EF Core (`dotnet tool install -g dotnet-ef`) e um PostgreSQL. Docker Desktop para a opção 1.
+
+### Conexão com o banco (sem senha no repositório)
+As APIs leem a variável de ambiente **`POSTGRES_CONNECTION`** com host, porta, usuário e senha, sem o nome do banco:
+```powershell
+[Environment]::SetEnvironmentVariable('POSTGRES_CONNECTION', 'Host=localhost;Port=5432;Username=postgres;Password=SUA_SENHA', 'User')
+```
+Cada serviço completa com o próprio banco (`catalog`, `ordering`), definido em `Database:Name` no appsettings. Reabra terminal e Visual Studio depois de criar a variável.
 
 ### Primeira vez: gerar as migrations
 ```powershell
@@ -92,6 +99,7 @@ dotnet ef migrations add InitialCreate -p src/Services/Ordering/Ordering.Infrast
 ```
 
 ### Opção 1 — back-end inteiro no Docker
+Copie `.env.example` para `.env` e defina `POSTGRES_PASSWORD` (o `.env` não vai para o Git).
 ```powershell
 docker compose up -d --build
 ```
@@ -111,10 +119,7 @@ Back e front têm **solutions separadas**, cada uma com o próprio botão Inicia
 | `store-server.slnx` (raiz) | Gateway, serviços, building blocks e testes | Perfil **"Back-end (Gateway + Catalog + Ordering)"** no menu ao lado do botão Iniciar (definido em `store-server.slnLaunch`) |
 | `src/Web/store-web/store-web.slnx` | Projeto Angular (`store-web.esproj`) | F5: roda `npm start` e abre o navegador em http://localhost:4200 com depuração |
 
-Antes, suba os bancos:
-```powershell
-docker compose up -d catalog-db ordering-db
-```
+As APIs usam o PostgreSQL apontado por `POSTGRES_CONNECTION` (um servidor, um banco por serviço, criados pelas migrations).
 
 ### Front-end pela linha de comando
 ```powershell
