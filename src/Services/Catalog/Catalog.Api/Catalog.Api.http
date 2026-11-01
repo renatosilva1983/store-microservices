@@ -1,11 +1,21 @@
 @baseUrl = http://localhost:5086
 @electronics = 8c5d2b52-8a2b-4f4e-9d6a-1b8f0c3e2a01
 
+### 0) Login: copie o accessToken da resposta para a variável @token abaixo
+POST http://localhost:5088/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@store.dev", "password": "Store@2026" }
+
+###
+@token = cole-o-token-aqui
+
 ### Listar categorias (vem com 3 do seed)
 GET {{baseUrl}}/api/categories
 
-### Criar produto
+### Criar produto (exige token; sem ele → 401)
 POST {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {

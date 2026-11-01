@@ -6,14 +6,18 @@ using Catalog.Application.Categories.Create;
 using Catalog.Application.Categories.Delete;
 using Catalog.Application.Categories.Queries;
 using Catalog.Application.Categories.Update;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controllers;
 
+// Alterar o catálogo exige login (JWT); consultar é público ([AllowAnonymous] nos GETs).
+[Authorize]
 [Route("api/categories")]
 public sealed class CategoriesController : ApiController
 {
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType<IReadOnlyList<CategoryResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> List(
         [FromServices] IQueryHandler<ListCategoriesQuery, IReadOnlyList<CategoryResponse>> handler,
@@ -25,6 +29,7 @@ public sealed class CategoriesController : ApiController
     }
 
     [HttpGet("{id:guid}")]
+    [AllowAnonymous]
     [ProducesResponseType<CategoryResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(
