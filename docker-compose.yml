@@ -2,6 +2,8 @@
 # O front (Angular) roda fora, com "npm start", e fala só com o Gateway (http://localhost:5000).
 #
 # Database per Service (ADR-03): cada serviço tem o seu PostgreSQL.
+# Senha: variável POSTGRES_PASSWORD, lida do ambiente ou do arquivo .env (fora do Git).
+# Portas dos bancos no host: 15432 e 15433, para não conflitar com um PostgreSQL local na 5432.
 # Dentro da rede do compose os serviços se acham pelo nome (catalog-api, ordering-api).
 
 services:
@@ -11,9 +13,9 @@ services:
     environment:
       POSTGRES_DB: catalog
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env (veja .env.example)}
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       - catalog-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -28,9 +30,9 @@ services:
     environment:
       POSTGRES_DB: ordering
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env (veja .env.example)}
     ports:
-      - "5433:5432"
+      - "15433:5432"
     volumes:
       - ordering-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -47,7 +49,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: "8080"
-      ConnectionStrings__CatalogDb: "Host=catalog-db;Port=5432;Database=catalog;Username=postgres;Password=postgres"
+      POSTGRES_CONNECTION: "Host=catalog-db;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD}"
       Database__ApplyMigrationsOnStartup: "true"
     ports:
       - "5101:8080"
@@ -63,7 +65,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: "8080"
-      ConnectionStrings__OrderingDb: "Host=ordering-db;Port=5432;Database=ordering;Username=postgres;Password=postgres"
+      POSTGRES_CONNECTION: "Host=ordering-db;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD}"
       Services__Catalog__BaseUrl: "http://catalog-api:8080/"
       Database__ApplyMigrationsOnStartup: "true"
     ports:
