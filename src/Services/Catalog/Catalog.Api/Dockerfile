@@ -4,7 +4,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# 1) Só os .csproj primeiro: o restore fica em cache enquanto as dependências não mudarem.
+# 1) Só os arquivos de projeto primeiro: o restore fica em cache enquanto as dependências não mudarem.
+#    Directory.*.props trazem as versões centralizadas e as configurações comuns.
+COPY Directory.Packages.props Directory.Build.props ./
 COPY src/BuildingBlocks/BuildingBlocks.Application/BuildingBlocks.Application.csproj src/BuildingBlocks/BuildingBlocks.Application/
 COPY src/Services/Catalog/Catalog.Domain/Catalog.Domain.csproj src/Services/Catalog/Catalog.Domain/
 COPY src/Services/Catalog/Catalog.Application/Catalog.Application.csproj src/Services/Catalog/Catalog.Application/
