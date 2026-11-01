@@ -1,0 +1,32 @@
+[
+  {
+    "Name": "Back-end (Gateway + Catalog + Ordering)",
+    "Projects": [
+      {
+        "Path": "src\\Gateway\\Store.Gateway\\Store.Gateway.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "src\\Services\\Catalog\\Catalog.Api\\Catalog.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "src\\Services\\Ordering\\Ordering.Api\\Ordering.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      }
+    ]
+  },
+  {
+    "Name": "Somente Catalog",
+    "Projects": [
+      {
+        "Path": "src\\Services\\Catalog\\Catalog.Api\\Catalog.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      }
+    ]
+  }
+]

@@ -104,12 +104,19 @@ docker compose up -d --build
 As migrations e o seed de categorias são aplicados na inicialização.
 
 ### Opção 2 — no Visual Studio (para debugar)
+Back e front têm **solutions separadas**, cada uma com o próprio botão Iniciar:
+
+| Solution | Conteúdo | Como rodar |
+|---|---|---|
+| `store-server.slnx` (raiz) | Gateway, serviços, building blocks e testes | Perfil **"Back-end (Gateway + Catalog + Ordering)"** no menu ao lado do botão Iniciar (definido em `store-server.slnLaunch`) |
+| `src/Web/store-web/store-web.slnx` | Projeto Angular (`store-web.esproj`) | F5: roda `npm start` e abre o navegador em http://localhost:4200 com depuração |
+
+Antes, suba os bancos:
 ```powershell
 docker compose up -d catalog-db ordering-db
 ```
-Solution → *Configure Startup Projects* → *Multiple startup projects*: `Catalog.Api`, `Ordering.Api` e `Store.Gateway`. Depois, F5.
 
-### Front-end
+### Front-end pela linha de comando
 ```powershell
 cd src/Web/store-web
 npm install
