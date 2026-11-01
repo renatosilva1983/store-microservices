@@ -114,7 +114,8 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 - **Frase:** "Repositório por agregado, não genérico; e o DbContext já é um Unit of Work, eu só o abstraio."
 
 ### ADR-15 · Strategy + Factory (cálculo de frete)
-- **Escolha:** `IShippingStrategy` com `StandardShipping`, `ExpressShipping`, `PickupInStore`; escolha por **Keyed Services** do .NET (`[FromKeyedServices("express")]`) ou uma `ShippingStrategyFactory`.
+- **Escolha:** `IShippingStrategy` com `StandardShipping`, `ExpressShipping`, `PickupInStoreShipping`; o `ShippingCalculator` recebe todas por `IEnumerable<IShippingStrategy>` e escolhe pelo método (Factory).
+- **Por que não Keyed Services:** com a chave vinda do request, o handler teria de pedir a estratégia ao `IServiceProvider` em tempo de execução — Service Locator, que esconde dependências. Keyed Services serve bem quando a chave é fixa no código (`[FromKeyedServices("express")]`).
 - **Porquê:** elimina `switch` crescente; novo tipo de frete = nova classe, sem alterar as existentes (**Open/Closed**).
 - **Frase:** "O frete usa Strategy: cada regra numa classe, escolhida por chave. Novo tipo de frete não mexe no código existente."
 
@@ -223,6 +224,11 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 ---
 
 ## PARTE 5 — Processo
+
+### ADR-34 · Central Package Management
+- **Escolha:** versões NuGet em `Directory.Packages.props`; configurações comuns (`TargetFramework`, `Nullable`) em `Directory.Build.props`. Os `.csproj` só dizem o nome do pacote.
+- **Porquê:** com vários serviços na mesma solução, evita versões divergentes do mesmo pacote e concentra a atualização num arquivo.
+- **Frase:** "As versões dos pacotes ficam centralizadas: atualizar o EF Core é mudar uma linha, e todos os serviços sobem juntos."
 
 ### ADR-33 · Git Flow simplificado + SemVer por fase
 - **Escolha:** `main` (estável, com tags) e `develop` (integração); branches `feature/`, `bugfix/`, `release/` e `hotfix/` nomeadas `tipo/fN-escopo-descricao`. Cada fase fecha numa release (`0.1.0`, `0.2.0`, `1.0.0`...). Pull Request com modelo; CHANGELOG no formato Keep a Changelog. Detalhes em `docs/fluxo-git.md`.
