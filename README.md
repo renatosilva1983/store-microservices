@@ -92,6 +92,15 @@ As APIs leem a variável de ambiente **`POSTGRES_CONNECTION`** com host, porta, 
 ```
 Cada serviço completa com o próprio banco (`catalog`, `ordering`), definido em `Database:Name` no appsettings. Reabra terminal e Visual Studio depois de criar a variável.
 
+### Outros segredos (Fase 3)
+```powershell
+[Environment]::SetEnvironmentVariable('Jwt__SigningKey', '<frase com 32+ caracteres>', 'User')
+[Environment]::SetEnvironmentVariable('RabbitMq__Password', '<senha do RabbitMQ>', 'User')
+```
+No Docker, os mesmos valores vão no `.env` (`JWT_SIGNING_KEY`, `RABBITMQ_PASSWORD`). Para rodar pelo Visual Studio, suba só o RabbitMQ: `docker compose up -d rabbitmq`.
+
+Login de demonstração: `admin@store.dev` / `Store@2026`.
+
 
 ### Banco de dados (migrations)
 As migrations ficam no repositório e são aplicadas automaticamente quando cada API sobe em Development (criam os bancos `catalog` e `ordering`).
@@ -110,6 +119,8 @@ docker compose up -d --build
 | Gateway (entrada do front) | http://localhost:5000 |
 | Catalog.Api | http://localhost:5101/scalar |
 | Ordering.Api | http://localhost:5102/scalar |
+| Identity.Api | http://localhost:5103/scalar |
+| RabbitMQ (painel) | http://localhost:15672 |
 
 As migrations e o seed de categorias são aplicados na inicialização.
 
