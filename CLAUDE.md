@@ -34,7 +34,7 @@ Ao terminar CADA tarefa, encerre com uma seção curta:
 ## Stack
 - .NET 10 (LTS), C# moderno, ASP.NET Core com **Controllers**.
 - EF Core + PostgreSQL (Npgsql); migrations por serviço.
-- YARP (gateway), MassTransit + RabbitMQ, `Microsoft.Extensions.Http.Resilience` (Polly), FluentValidation, Scrutor, Serilog.
+- YARP (gateway), MassTransit 8 + RabbitMQ, `Microsoft.Extensions.Http.Resilience` (Polly), FluentValidation, Scrutor, JWT Bearer.
 - Testes: xUnit, NSubstitute, Shouldly; Testcontainers (opcional).
 - **Não usar:** MediatR, AutoMapper, FluentAssertions 8+, Moq (motivos no ADR-12 e ADR-22).
 - Angular 22 (versão mais recente; exige Node ^22.22.3 ou ^24.15.0 e TypeScript 6.0) standalone, signals, novo control flow, `inject()`, SCSS.
