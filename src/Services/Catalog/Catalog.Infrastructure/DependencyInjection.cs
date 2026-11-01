@@ -1,4 +1,6 @@
+using BuildingBlocks.Messaging;
 using Catalog.Application.Abstractions;
+using Catalog.Infrastructure.Messaging;
 using Catalog.Infrastructure.Persistence;
 using Catalog.Infrastructure.Persistence.Queries;
 using Catalog.Infrastructure.Persistence.Repositories;
@@ -36,6 +38,10 @@ public static class DependencyInjection
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<ICatalogQueries, CatalogQueries>();
+
+        // Mensageria: consome OrderCreated, baixa o estoque e responde com StockReserved/StockRejected.
+        services.AddMessaging<CatalogDbContext>(configuration, "catalog", bus =>
+            bus.AddConsumer<OrderCreatedConsumer>());
 
         return services;
     }
