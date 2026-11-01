@@ -16,6 +16,8 @@ builder.Services.AddCors(options =>
         .AllowAnyMethod()
         .WithExposedHeaders("Location")));
 
+builder.Services.AddHealthChecks();
+
 builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
@@ -25,6 +27,7 @@ var app = builder.Build();
 app.UseCors();
 
 app.MapGet("/", () => Results.Ok(new { service = "Store.Gateway", status = "ok" }));
+app.MapHealthChecks("/health");
 app.MapReverseProxy();
 
 app.Run();
