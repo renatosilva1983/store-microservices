@@ -41,6 +41,33 @@ services:
       timeout: 5s
       retries: 10
 
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: store
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Defina RABBITMQ_PASSWORD no arquivo .env (veja .env.example)}
+    ports:
+      - "5672:5672"     # AMQP (as APIs no Visual Studio usam esta porta)
+      - "15672:15672"   # painel de gestão: http://localhost:15672
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  identity-api:
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.Api/Dockerfile
+    container_name: identity-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?Defina JWT_SIGNING_KEY no arquivo .env (veja .env.example)}
+    ports:
+      - "5103:8080"
+
   catalog-api:
     build:
       context: .
@@ -51,10 +78,15 @@ services:
       ASPNETCORE_HTTP_PORTS: "8080"
       POSTGRES_CONNECTION: "Host=catalog-db;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD}"
       Database__ApplyMigrationsOnStartup: "true"
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY}
     ports:
       - "5101:8080"
     depends_on:
       catalog-db:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
 
   ordering-api:
@@ -68,10 +100,15 @@ services:
       POSTGRES_CONNECTION: "Host=ordering-db;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD}"
       Services__Catalog__BaseUrl: "http://catalog-api:8080/"
       Database__ApplyMigrationsOnStartup: "true"
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY}
     ports:
       - "5102:8080"
     depends_on:
       ordering-db:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       catalog-api:
         condition: service_started
@@ -87,9 +124,11 @@ services:
       # Mesma configuração do appsettings, trocando os destinos para os nomes da rede do compose.
       ReverseProxy__Clusters__catalog__Destinations__d1__Address: "http://catalog-api:8080/"
       ReverseProxy__Clusters__ordering__Destinations__d1__Address: "http://ordering-api:8080/"
+      ReverseProxy__Clusters__identity__Destinations__d1__Address: "http://identity-api:8080/"
     ports:
       - "5000:8080"
     depends_on:
+      - identity-api
       - catalog-api
       - ordering-api
 
