@@ -1,5 +1,6 @@
 using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Application.Results;
+using BuildingBlocks.Contracts.Orders;
 using Ordering.Application.Abstractions;
 using Ordering.Application.Shipping;
 using Ordering.Domain.Orders;
@@ -8,14 +9,16 @@ namespace Ordering.Application.Orders.Create;
 
 /// <summary>
 /// Monta o pedido consultando o Catálogo (síncrono, ADR-05) e calcula o frete (Strategy, ADR-15).
-/// A baixa de estoque de verdade acontece no Catálogo, via evento, na Fase 3.
-/// Aqui a checagem de estoque é só uma pré-validação para dar resposta rápida ao cliente.
+/// A checagem de estoque aqui é só uma pré-validação para responder rápido ao cliente.
+/// A baixa de verdade acontece no Catálogo, ao consumir o evento OrderCreated (ADR-06):
+/// o pedido nasce Pending e vira Confirmed ou Cancelled quando o Catálogo responder.
 /// </summary>
 public sealed class CreateOrderCommandHandler(
     IProductCatalog catalog,
     IShippingCalculator shippingCalculator,
     IOrderRepository orders,
     IUnitOfWork unitOfWork,
+    IIntegrationEventPublisher eventPublisher,
     TimeProvider timeProvider)
     : ICommandHandler<CreateOrderCommand, Guid>
 {
@@ -56,6 +59,16 @@ public sealed class CreateOrderCommandHandler(
         order.SetShipping(method, shippingCost);
 
         orders.Add(order);
+
+        // Publicado ANTES do SaveChanges de propósito: com o Outbox, o evento é gravado
+        // na mesma transação do pedido e só é entregue ao RabbitMQ depois do commit.
+        await eventPublisher.PublishAsync(
+            new OrderCreatedIntegrationEvent(
+                order.Id,
+                order.CreatedAtUtc,
+                order.Items.Select(item => new OrderCreatedItem(item.ProductId, item.Sku, item.Quantity)).ToList()),
+            cancellationToken);
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(order.Id);
