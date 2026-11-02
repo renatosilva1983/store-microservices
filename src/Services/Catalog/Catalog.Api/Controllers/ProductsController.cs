@@ -8,6 +8,7 @@ using Catalog.Application.Products.Delete;
 using Catalog.Application.Products.GetById;
 using Catalog.Application.Products.List;
 using Catalog.Application.Products.Update;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controllers;
@@ -16,10 +17,13 @@ namespace Catalog.Api.Controllers;
 /// Controller fino (MVC, ADR-21): recebe, monta o comando, chama o handler e traduz o Result em HTTP.
 /// Os handlers entram por [FromServices] na action: cada action recebe só o que usa.
 /// </summary>
+// Alterar o catálogo exige login (JWT); consultar é público ([AllowAnonymous] nos GETs).
+[Authorize]
 [Route("api/products")]
 public sealed class ProductsController : ApiController
 {
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType<PagedResult<ProductResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> List(
@@ -36,6 +40,7 @@ public sealed class ProductsController : ApiController
     }
 
     [HttpGet("{id:guid}")]
+    [AllowAnonymous]
     [ProducesResponseType<ProductResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(

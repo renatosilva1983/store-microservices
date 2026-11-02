@@ -59,10 +59,12 @@ Modelo: **Git Flow simplificado** (ADR-33), com versionamento semântico por fas
 ### Fase 3 → `release/1.0.0`
 - `feature/f3-messaging-rabbitmq`
 - `feature/f3-catalog-stock-consumer`
+- `feature/f3-observability`
 - `feature/f3-identity-jwt`
 - `feature/f3-web-auth`
-- `feature/f3-observability`
 - `feature/f3-ci-github-actions`
+- `feature/f3-docker-compose`
+- `feature/f3-study-guide`
 
 ### Fase 3.5 → `release/1.1.0`
 - `feature/f35-catalog-graphql`

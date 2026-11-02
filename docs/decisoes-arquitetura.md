@@ -58,7 +58,8 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 ### ADR-06 · Comunicação assíncrona: eventos com RabbitMQ + MassTransit
 - **Escolha:** ao criar um pedido, Ordering publica `PedidoCriadoIntegrationEvent`; Catalog consome e baixa o estoque.
 - **Porquê:** baixar estoque não precisa travar o cliente; desacopla os serviços (o Ordering nem sabe quem consome). Aceito **consistência eventual**.
-- **Por que MassTransit:** abstrai o RabbitMQ (filas, exchanges, retry, dead-letter) e permite trocar o broker. Usei RabbitMQ na Kakau.
+- **Por que MassTransit:** abstrai o RabbitMQ (filas, exchanges, retry, dead-letter) e permite trocar o broker. Usei RabbitMQ na Kakau. Versão **8.x** (open source); a 9.x passou a ter licença comercial.
+- **Resposta do Catálogo:** `StockReserved` confirma e `StockRejected` cancela o pedido — coreografia, sem orquestrador.
 - **Padrões:** **Publish/Subscribe**, **Event-Driven Architecture**, **consumidor idempotente** (processar o mesmo evento duas vezes não pode baixar estoque duas vezes).
 - **Extra (se der tempo): Outbox Pattern** com o outbox do MassTransit + EF Core — grava o evento na mesma transação do pedido, evitando "salvou o pedido mas o evento se perdeu".
 - **Frase:** "Quando não preciso de resposta imediata, publico um evento. O estoque é atualizado com consistência eventual, e o consumidor é idempotente porque mensageria garante entrega pelo menos uma vez."
@@ -70,7 +71,8 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 - **Frase:** "Autenticação com JWT emitido por um serviço de identidade; cada API valida o token de forma independente."
 
 ### ADR-08 · Observabilidade básica
-- **Escolha:** Health Checks (`/health`) por serviço, logs estruturados com Serilog, Correlation Id propagado entre serviços.
+- **Escolha:** Health Checks (`/health`) por serviço, logs estruturados com o logging nativo (texto no desenvolvimento, JSON em container), Correlation Id propagado entre serviços — tudo em `ServiceDefaults` (BuildingBlocks.Api).
+- **Por que sem Serilog:** o logging nativo já faz escopos e JSON; Serilog entraria para enviar logs a destinos como Seq ou Elastic.
 - **Porquê:** em microsserviços uma requisição passa por vários processos; sem correlation id não dá para rastrear um erro.
 - **Frase:** "Cada serviço expõe health check e loga com um correlation id, para eu seguir uma requisição de ponta a ponta."
 

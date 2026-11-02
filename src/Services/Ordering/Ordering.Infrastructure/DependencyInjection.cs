@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using BuildingBlocks.Messaging;
 using Npgsql;
 using Ordering.Application.Abstractions;
 using Ordering.Infrastructure.Catalog;
+using Ordering.Infrastructure.Messaging;
 using Ordering.Infrastructure.Persistence;
 using Ordering.Infrastructure.Persistence.Queries;
 using Ordering.Infrastructure.Persistence.Repositories;
@@ -34,6 +36,13 @@ public static class DependencyInjection
 
         // Integração com o Catálogo (HTTP + resiliência).
         services.AddCatalogClient(configuration);
+
+        // Mensageria (RabbitMQ + Outbox/Inbox): publica OrderCreated e consome as respostas do Catálogo.
+        services.AddMessaging<OrderingDbContext>(configuration, "ordering", bus =>
+        {
+            bus.AddConsumer<StockReservedConsumer>();
+            bus.AddConsumer<StockRejectedConsumer>();
+        });
 
         return services;
     }

@@ -2,9 +2,12 @@
 
 ### 1) Pegue um productId em GET http://localhost:5086/api/products e cole abaixo
 @productId = 00000000-0000-0000-0000-000000000000
+### 2) Faça login em Identity.Api.http e cole o token
+@token = cole-o-token-aqui
 
-### Criar pedido (preço vem do Catálogo, frete pela Strategy)
+### Criar pedido (preço vem do Catálogo, frete pela Strategy; estoque baixa por evento)
 POST {{baseUrl}}/api/orders
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -16,8 +19,9 @@ Content-Type: application/json
   ]
 }
 
-### Listar pedidos
+### Listar pedidos (status passa de Pending para Confirmed quando o Catálogo responde)
 GET {{baseUrl}}/api/orders?page=1&pageSize=10
+Authorization: Bearer {{token}}
 
 ### Produto inexistente → 404 (o Catálogo respondeu 404; o adaptador traduziu)
 POST {{baseUrl}}/api/orders
