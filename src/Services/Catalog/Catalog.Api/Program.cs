@@ -1,6 +1,7 @@
 using BuildingBlocks.Api.Authentication;
 using BuildingBlocks.Api.Observability;
 using Catalog.Api.ErrorHandling;
+using Catalog.Api.GraphQL;
 using Catalog.Application;
 using Catalog.Infrastructure;
 using Catalog.Infrastructure.Persistence;
@@ -17,6 +18,12 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// GraphQL só para leitura (ADR-32): mesmos query handlers do REST, outra borda.
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType<CatalogQuery>()
+    .AddMaxExecutionDepthRule(5);
 
 // /health também verifica o banco (e o MassTransit registra o estado do barramento).
 builder.Services.AddHealthChecks().AddDbContextCheck<CatalogDbContext>("catalog-db");
@@ -40,6 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
+app.MapGraphQL("/api/graphql");
 app.MapServiceDefaults();
 
 app.Run();

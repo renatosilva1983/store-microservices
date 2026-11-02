@@ -180,7 +180,8 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 - **Porquê:** o front pede só os campos que usa (evita **over-fetching**) e traz produto + categoria numa chamada (evita **under-fetching** / várias idas ao servidor). REST segue melhor para comandos e integração: simples, padronizado, cacheável por HTTP.
 - **Arquitetura:** os resolvers GraphQL chamam os **mesmos query handlers** da Application. GraphQL e REST são só bordas diferentes (Api) sobre o mesmo núcleo — prova prática da Clean Architecture.
 - **Gateway:** YARP roteia `/graphql` para o Catalog.
-- **Cuidados citáveis:** problema **N+1** (resolvido com **DataLoader**, que agrupa as buscas) e limite de profundidade/complexidade da query (evita consultas abusivas).
+- **Cuidados citáveis:** problema **N+1** — aqui evitado pelo read model, que já traz a categoria com JOIN; quando um campo é resolvido item a item, a solução é **DataLoader**, que agrupa as buscas. Profundidade máxima da consulta limitada (`AddMaxExecutionDepthRule`).
+- **Endpoint:** `/api/graphql` no Catalog; pelo Gateway, `/api/catalog/graphql` (a rota existente já cobre, sem mudança no Gateway).
 - **Frase:** "Usei REST para comandos e integração entre serviços, e GraphQL para as consultas do front, sobre os mesmos casos de uso. Isso só foi simples porque a lógica está na Application, não nos controllers. Para evitar N+1 no GraphQL, usei DataLoader."
 
 ---
