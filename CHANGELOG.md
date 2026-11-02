@@ -4,6 +4,10 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 
 ## [Não publicado]
 
+## [1.1.0] - 2026-11-02
+### Adicionado
+- Fase 3.5 — GraphQL (Hot Chocolate) para consultas do Catálogo; listagem do Angular via GraphQL.
+
 ## [1.0.0] - 2026-11-02
 ### Adicionado
 - Fase 3 — mensageria com RabbitMQ + MassTransit (Outbox/Inbox): pedido criado baixa o estoque no Catálogo por evento e é confirmado ou cancelado; Identity.Api com JWT e APIs protegidas; login no Angular; health checks, correlation id e logs estruturados; CI no GitHub Actions.
