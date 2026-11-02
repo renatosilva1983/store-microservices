@@ -7,6 +7,8 @@ using Catalog.Application.Products;
 using Catalog.Application.Products.GetById;
 using Catalog.Application.Products.List;
 using HotChocolate;
+// HotChocolate também tem um tipo "Error": o alias deixa claro qual é o nosso.
+using Error = BuildingBlocks.Application.Results.Error;
 
 namespace Catalog.Api.GraphQL;
 
