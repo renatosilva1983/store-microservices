@@ -54,5 +54,14 @@ Content-Type: application/json
 ### Listar com filtro e paginação
 GET {{baseUrl}}/api/products?name=note&page=1&pageSize=10
 
+### GraphQL: só os campos que a tela usa (pelo Gateway: http://localhost:5000/api/catalog/graphql)
+POST {{baseUrl}}/api/graphql
+Content-Type: application/json
+
+{
+  "query": "query($name: String) { products(name: $name, page: 1, pageSize: 5) { totalCount items { name price categoryName } } categories { id name } }",
+  "variables": { "name": "note" }
+}
+
 ### Excluir categoria com produtos → 409 Conflict
 DELETE {{baseUrl}}/api/categories/{{electronics}}
