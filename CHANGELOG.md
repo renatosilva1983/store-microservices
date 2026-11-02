@@ -3,8 +3,11 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
+
+## [0.2.0] - 2026-11-01
 ### Adicionado
 - Fase 2 — Gateway YARP; serviço de Pedidos (agregado Order, frete com Strategy, integração com o Catálogo via HTTP com resiliência, API REST); front Angular 22 com listagem, filtro, paginação e formulário de produtos; docker-compose com banco por serviço.
+- Migration inicial do banco de Pedidos.
 
 ### Alterado
 - Senha do banco fora do repositório: conexão-base na variável `POSTGRES_CONNECTION` (APIs) e `POSTGRES_PASSWORD` via `.env` (docker-compose).
