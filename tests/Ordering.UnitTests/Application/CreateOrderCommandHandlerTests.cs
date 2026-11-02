@@ -1,4 +1,6 @@
+using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Application.Results;
+using BuildingBlocks.Contracts.Orders;
 using NSubstitute;
 using Ordering.Application.Abstractions;
 using Ordering.Application.Orders.Create;
@@ -19,12 +21,13 @@ public class CreateOrderCommandHandlerTests
     private readonly IProductCatalog _catalog = Substitute.For<IProductCatalog>();
     private readonly IOrderRepository _orders = Substitute.For<IOrderRepository>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
+    private readonly IIntegrationEventPublisher _events = Substitute.For<IIntegrationEventPublisher>();
     private readonly CreateOrderCommandHandler _handler;
 
     public CreateOrderCommandHandlerTests()
     {
         var shipping = new ShippingCalculator([new StandardShipping(), new ExpressShipping(), new PickupInStoreShipping()]);
-        _handler = new CreateOrderCommandHandler(_catalog, shipping, _orders, _unitOfWork, TimeProvider.System);
+        _handler = new CreateOrderCommandHandler(_catalog, shipping, _orders, _unitOfWork, _events, TimeProvider.System);
     }
 
     private static CreateOrderCommand Command(int quantity = 1, string shipping = "express") =>
@@ -44,6 +47,9 @@ public class CreateOrderCommandHandlerTests
             order.ShippingCost == 49m &&
             order.Total == 8049m));
         await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _events.Received(1).PublishAsync(
+            Arg.Is<OrderCreatedIntegrationEvent>(e => e.Items.Single().Quantity == 2),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -84,5 +90,6 @@ public class CreateOrderCommandHandlerTests
 
         result.Error.Type.ShouldBe(ErrorType.Unavailable);
         await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _events.DidNotReceive().PublishAsync(Arg.Any<OrderCreatedIntegrationEvent>(), Arg.Any<CancellationToken>());
     }
 }

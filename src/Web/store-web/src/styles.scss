@@ -22,7 +22,12 @@ body { margin: 0; background: var(--color-bg); }
   a.active, a:hover { opacity: 1; }
   .brand { font-weight: 700; font-size: 1.1rem; opacity: 1; }
   nav { display: flex; gap: 16px; }
+  .session { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .session .link { color: #fff; font-size: 1rem; }
 }
+
+.login { max-width: 420px; margin: 40px auto; display: flex; flex-direction: column; gap: 12px; }
+.login h1 { margin: 0; }
 
 .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
 
