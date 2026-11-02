@@ -4,11 +4,18 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 
 ## [Não publicado]
 
-## [0.2.0] - 2026-11-01
+## [1.1.0] - 2026-11-02
+### Adicionado
+- Fase 3.5 — GraphQL (Hot Chocolate) para consultas do Catálogo; listagem do Angular via GraphQL (`docs/guia-estudo-fase3-5.md`).
+
+## [1.0.0] - 2026-11-02
 ### Adicionado
 - Fase 3 — mensageria com RabbitMQ + MassTransit (Outbox/Inbox): pedido criado baixa o estoque no Catálogo por evento e é confirmado ou cancelado; Identity.Api com JWT e APIs protegidas; login no Angular; health checks, correlation id e logs estruturados; CI no GitHub Actions.
 - Guia de estudo da Fase 3 (`docs/guia-estudo-fase3.md`).
-- Fase 3.5 — GraphQL (Hot Chocolate) para consultas do Catálogo; listagem do Angular via GraphQL (`docs/guia-estudo-fase3-5.md`).
+- Migrations do Outbox/Inbox do MassTransit (Catalog e Ordering).
+
+## [0.2.0] - 2026-11-01
+### Adicionado
 - Fase 2 — Gateway YARP; serviço de Pedidos (agregado Order, frete com Strategy, integração com o Catálogo via HTTP com resiliência, API REST); front Angular 22 com listagem, filtro, paginação e formulário de produtos; docker-compose com banco por serviço.
 - Guia de estudo da Fase 2 (`docs/guia-estudo-fase2.md`).
 - Migration inicial do banco de Pedidos.
