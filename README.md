@@ -151,3 +151,4 @@ dotnet test
 - [Fase 1 — Catálogo](docs/guia-estudo-fase1.md)
 - [Fase 2 — Gateway, Pedidos e Angular](docs/guia-estudo-fase2.md)
 - [Fase 3 — Eventos, JWT, observabilidade e CI](docs/guia-estudo-fase3.md)
+- [Fase 3.5 — GraphQL no Catálogo](docs/guia-estudo-fase3-5.md)
