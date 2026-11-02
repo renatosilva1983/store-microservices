@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, input, output } from '@angular/core';
-import { Product } from '../../data/catalog.models';
+import { ProductListItem } from '../../data/catalog.models';
 
 /**
  * Componente de apresentação (dumb — ADR-25): só exibe e emite eventos.
@@ -12,7 +12,7 @@ import { Product } from '../../data/catalog.models';
   templateUrl: './product-table.html',
 })
 export class ProductTable {
-  readonly products = input.required<Product[]>();
-  readonly edit = output<Product>();
-  readonly remove = output<Product>();
+  readonly products = input.required<ProductListItem[]>();
+  readonly edit = output<ProductListItem>();
+  readonly remove = output<ProductListItem>();
 }

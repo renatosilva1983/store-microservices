@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { Pagination } from '../../../../shared/ui/pagination';
 import { ProductTable } from '../../components/product-table/product-table';
-import { Product } from '../../data/catalog.models';
+import { ProductListItem } from '../../data/catalog.models';
 import { ProductsFacade } from '../../data/products.facade';
 
 /**
@@ -40,11 +40,11 @@ export class ProductList implements OnInit {
     this.facade.filterByCategory((event.target as HTMLSelectElement).value);
   }
 
-  protected onEdit(product: Product): void {
+  protected onEdit(product: ProductListItem): void {
     this.router.navigate(['/products', product.id, 'edit']);
   }
 
-  protected onRemove(product: Product): void {
+  protected onRemove(product: ProductListItem): void {
     if (!confirm(`Excluir "${product.name}"? Essa ação não pode ser desfeita.`)) {
       return;
     }
