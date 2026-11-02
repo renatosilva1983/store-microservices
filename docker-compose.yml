@@ -1,5 +1,10 @@
-# Sobe o sistema inteiro com: docker compose up -d --build
-# Fase 1: banco do Catálogo + Catalog.Api.
+# Sobe o back-end inteiro com: docker compose up -d --build
+# O front (Angular) roda fora, com "npm start", e fala só com o Gateway (http://localhost:5000).
+#
+# Database per Service (ADR-03): cada serviço tem o seu PostgreSQL.
+# Senha: variável POSTGRES_PASSWORD, lida do ambiente ou do arquivo .env (fora do Git).
+# Portas dos bancos no host: 15432 e 15433, para não conflitar com um PostgreSQL local na 5432.
+# Dentro da rede do compose os serviços se acham pelo nome (catalog-api, ordering-api).
 
 services:
   catalog-db:
@@ -8,13 +13,30 @@ services:
     environment:
       POSTGRES_DB: catalog
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env (veja .env.example)}
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       - catalog-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d catalog"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ordering-db:
+    image: postgres:17-alpine
+    container_name: ordering-db
+    environment:
+      POSTGRES_DB: ordering
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env (veja .env.example)}
+    ports:
+      - "15433:5432"
+    volumes:
+      - ordering-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ordering"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -27,7 +49,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: "8080"
-      ConnectionStrings__CatalogDb: "Host=catalog-db;Port=5432;Database=catalog;Username=postgres;Password=postgres"
+      POSTGRES_CONNECTION: "Host=catalog-db;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD}"
       Database__ApplyMigrationsOnStartup: "true"
     ports:
       - "5101:8080"
@@ -35,5 +57,42 @@ services:
       catalog-db:
         condition: service_healthy
 
+  ordering-api:
+    build:
+      context: .
+      dockerfile: src/Services/Ordering/Ordering.Api/Dockerfile
+    container_name: ordering-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      POSTGRES_CONNECTION: "Host=ordering-db;Port=5432;Username=postgres;Password=${POSTGRES_PASSWORD}"
+      Services__Catalog__BaseUrl: "http://catalog-api:8080/"
+      Database__ApplyMigrationsOnStartup: "true"
+    ports:
+      - "5102:8080"
+    depends_on:
+      ordering-db:
+        condition: service_healthy
+      catalog-api:
+        condition: service_started
+
+  gateway:
+    build:
+      context: .
+      dockerfile: src/Gateway/Store.Gateway/Dockerfile
+    container_name: gateway
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      # Mesma configuração do appsettings, trocando os destinos para os nomes da rede do compose.
+      ReverseProxy__Clusters__catalog__Destinations__d1__Address: "http://catalog-api:8080/"
+      ReverseProxy__Clusters__ordering__Destinations__d1__Address: "http://ordering-api:8080/"
+    ports:
+      - "5000:8080"
+    depends_on:
+      - catalog-api
+      - ordering-api
+
 volumes:
   catalog-db-data:
+  ordering-db-data:

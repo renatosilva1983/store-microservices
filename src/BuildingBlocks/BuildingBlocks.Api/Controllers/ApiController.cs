@@ -1,11 +1,13 @@
 using BuildingBlocks.Application.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Catalog.Api.Controllers;
+namespace BuildingBlocks.Api.Controllers;
 
 /// <summary>
 /// Base dos controllers: traduz o Error do caso de uso em resposta HTTP (ProblemDetails).
-/// Um lugar só decide o status code de cada tipo de erro.
+/// Um lugar só decide o status code de cada tipo de erro, para todos os serviços.
 /// </summary>
 [ApiController]
 [Produces("application/json")]
@@ -15,7 +17,7 @@ public abstract class ApiController : ControllerBase
     {
         if (error is ValidationError validationError)
         {
-            var modelState = new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary();
+            var modelState = new ModelStateDictionary();
             foreach (var (field, messages) in validationError.Errors)
             {
                 foreach (var message in messages)
@@ -32,6 +34,7 @@ public abstract class ApiController : ControllerBase
             ErrorType.NotFound => StatusCodes.Status404NotFound,
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.Validation => StatusCodes.Status400BadRequest,
+            ErrorType.Unavailable => StatusCodes.Status503ServiceUnavailable,
             _ => StatusCodes.Status400BadRequest
         };
 

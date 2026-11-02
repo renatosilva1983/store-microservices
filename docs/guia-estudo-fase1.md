@@ -4,7 +4,7 @@ Roteiro para estudar o código **debugando**. Para cada etapa: onde colocar o br
 
 ## Antes de começar
 
-1. Suba só o banco: `docker compose up -d catalog-db`
+1. Garanta a variável `POSTGRES_CONNECTION` apontando para o seu PostgreSQL (ver README).
 2. Abra a solution no Visual Studio, defina `Catalog.Api` como projeto de inicialização e rode com **F5** (perfil `https`). O navegador abre o **Scalar** (documentação interativa da API).
 3. Na primeira execução, as migrations são aplicadas e as 3 categorias do seed são criadas.
 4. Use o arquivo `Catalog.Api.http` (botão "Send request" no VS) ou o Scalar para disparar as requisições.
