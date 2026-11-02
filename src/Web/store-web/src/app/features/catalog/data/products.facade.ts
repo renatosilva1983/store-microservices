@@ -2,7 +2,7 @@ import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, Subject, catchError, finalize, switchMap, tap } from 'rxjs';
 import { CatalogApi } from './catalog-api';
-import { Category, PagedResult, Product, ProductFilter } from './catalog.models';
+import { Category, PagedResult, ProductFilter, ProductListItem } from './catalog.models';
 
 /**
  * Facade (ADR-25): a página conversa com este serviço, nunca com o HttpClient.
@@ -17,7 +17,7 @@ export class ProductsFacade {
 
   // Estado privado e gravável; a tela só enxerga as versões somente leitura.
   private readonly _filter = signal<ProductFilter>({ name: '', categoryId: '', page: 1, pageSize: 10 });
-  private readonly _result = signal<PagedResult<Product> | null>(null);
+  private readonly _result = signal<PagedResult<ProductListItem> | null>(null);
   private readonly _categories = signal<Category[]>([]);
   private readonly _loading = signal(false);
 
@@ -73,7 +73,7 @@ export class ProductsFacade {
     this.load();
   }
 
-  delete(product: Product): Observable<void> {
+  delete(product: ProductListItem): Observable<void> {
     return this.api.deleteProduct(product.id).pipe(
       tap(() => {
         // Se apagou o último item da página, volta uma página.
