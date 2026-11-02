@@ -13,6 +13,12 @@ export interface Product {
   createdAtUtc: string;
 }
 
+/** O que a listagem pede via GraphQL: só os campos que a tabela mostra. */
+export type ProductListItem = Pick<
+  Product,
+  'id' | 'name' | 'description' | 'sku' | 'price' | 'currency' | 'stockQuantity' | 'categoryName'
+>;
+
 export interface Category {
   id: string;
   name: string;
