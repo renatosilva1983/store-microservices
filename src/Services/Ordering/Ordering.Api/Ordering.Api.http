@@ -1,0 +1,45 @@
+@baseUrl = http://localhost:5087
+
+### 1) Pegue um productId em GET http://localhost:5086/api/products e cole abaixo
+@productId = 00000000-0000-0000-0000-000000000000
+
+### Criar pedido (preço vem do Catálogo, frete pela Strategy)
+POST {{baseUrl}}/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "Renato",
+  "customerEmail": "renato@example.com",
+  "shippingMethod": "Express",
+  "items": [
+    { "productId": "{{productId}}", "quantity": 2 }
+  ]
+}
+
+### Listar pedidos
+GET {{baseUrl}}/api/orders?page=1&pageSize=10
+
+### Produto inexistente → 404 (o Catálogo respondeu 404; o adaptador traduziu)
+POST {{baseUrl}}/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "Renato",
+  "customerEmail": "renato@example.com",
+  "shippingMethod": "Standard",
+  "items": [ { "productId": "11111111-1111-1111-1111-111111111111", "quantity": 1 } ]
+}
+
+### Método de entrega inválido → 400 (ValidationDecorator)
+POST {{baseUrl}}/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "",
+  "customerEmail": "email-invalido",
+  "shippingMethod": "Drone",
+  "items": []
+}
+
+### Circuit breaker: PARE o Catalog.Api e envie o primeiro POST umas 6 vezes.
+### Primeiro vêm as novas tentativas (retry), depois 503 imediato: o circuito abriu (veja o log "OnCircuitOpened").

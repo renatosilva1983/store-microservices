@@ -1,0 +1,75 @@
+<section class="card">
+  <div class="page-header">
+    <h1>{{ isEdit() ? 'Editar produto' : 'Novo produto' }}</h1>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="form-grid">
+      <div class="field full">
+        <label for="name">Nome</label>
+        <input id="name" formControlName="name" />
+        @if (hasError(form.controls.name, 'required')) {
+          <span class="error">Informe o nome.</span>
+        }
+        @if (serverError(form.controls.name); as message) {
+          <span class="error">{{ message }}</span>
+        }
+      </div>
+
+      <div class="field full">
+        <label for="description">Descrição</label>
+        <textarea id="description" rows="3" formControlName="description"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="sku">SKU</label>
+        <input id="sku" formControlName="sku" placeholder="NB-001" />
+        @if (hasError(form.controls.sku, 'pattern')) {
+          <span class="error">De 3 a 20 caracteres: letras, números ou hífen.</span>
+        }
+        @if (serverError(form.controls.sku); as message) {
+          <span class="error">{{ message }}</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="categoryId">Categoria</label>
+        <select id="categoryId" formControlName="categoryId">
+          <option value="" disabled>Selecione…</option>
+          @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.name }}</option>
+          }
+        </select>
+        @if (hasError(form.controls.categoryId, 'required')) {
+          <span class="error">Escolha uma categoria.</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="price">Preço (R$)</label>
+        <input id="price" type="number" min="0" step="0.01" formControlName="price" />
+        @if (hasError(form.controls.price, 'min')) {
+          <span class="error">O preço não pode ser negativo.</span>
+        }
+        @if (serverError(form.controls.price); as message) {
+          <span class="error">{{ message }}</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="initialStock">Estoque inicial</label>
+        <input id="initialStock" type="number" min="0" step="1" formControlName="initialStock" />
+        @if (isEdit()) {
+          <span class="muted">O estoque muda pelos pedidos, não pela edição.</span>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a class="button" routerLink="/products">Cancelar</a>
+      <button type="submit" class="primary" [disabled]="saving()">
+        {{ saving() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</section>
