@@ -1,4 +1,4 @@
-# Integração contínua (ADR-23): todo push e PR em main/develop compila e testa back e front.
+# Integração contínua (ADR-23): todo push e PR em main/develop compila e testa back e front e valida o Terraform.
 name: CI
 
 on:
@@ -54,3 +54,26 @@ jobs:
 
       - name: Build de produção
         run: npm run build
+
+  terraform:
+    name: Infraestrutura (Terraform)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '~1.13'
+
+      # Formatação padrão: falha se algum .tf não estiver como o terraform fmt deixaria.
+      - name: Formatação
+        run: terraform fmt -check -recursive infra/terraform
+
+      # -backend=false: valida a sintaxe e as referências sem acessar a AWS nem o state.
+      - name: Validar bootstrap
+        working-directory: infra/terraform/bootstrap
+        run: terraform init -backend=false -input=false && terraform validate
+
+      - name: Validar módulo principal
+        working-directory: infra/terraform/aws
+        run: terraform init -backend=false -input=false && terraform validate
