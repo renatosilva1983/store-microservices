@@ -39,3 +39,15 @@ variable "services" {
   type        = set(string)
   default     = ["gateway", "identity-api", "catalog-api", "ordering-api"]
 }
+
+variable "postgres_version" {
+  description = "Versão major do PostgreSQL. 18, igual à usada localmente."
+  type        = string
+  default     = "18"
+}
+
+variable "db_instance_class" {
+  description = "Tamanho da instância RDS. db.t4g.micro: 2 vCPU (burst) e 1 GB, a menor e mais barata."
+  type        = string
+  default     = "db.t4g.micro"
+}
