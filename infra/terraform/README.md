@@ -54,8 +54,8 @@ terraform destroy   # no módulo aws/; o bucket do bootstrap fica (prevent_destr
 ```
 
 ## Ordem das próximas etapas
-1. Bootstrap, rede, ECR e role OIDC. **Aplicado.**
-2. Banco RDS e segredos (Secrets Manager). Escrito; aplicar perto da apresentação.
+1. Bootstrap, rede, ECR e role OIDC. Testado com `apply` e `destroy`; hoje só o bucket do state existe na conta.
+2. Banco RDS e segredos (Secrets Manager). Escrito e validado com `plan`.
 3. ECS (cluster, tasks, Service Connect, RabbitMQ) e ALB.
 4. Front no S3 + CloudFront com domínio `store.renatosilva.dev`.
 5. Pipeline de deploy no GitHub Actions.
