@@ -66,6 +66,14 @@ public static class DependencyInjection
             Database = configuration["Database:Name"] ?? DefaultDatabaseName
         };
 
+        // Na AWS a senha chega separada, vinda do Secrets Manager (variável Database__Password),
+        // e a conexão-base fica sem segredo. Localmente a senha pode continuar na própria conexão.
+        var password = configuration["Database:Password"];
+        if (!string.IsNullOrWhiteSpace(password))
+        {
+            builder.Password = password;
+        }
+
         return builder.ConnectionString;
     }
 }
