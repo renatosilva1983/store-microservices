@@ -63,7 +63,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: '~1.13'
+          terraform_version: '~1.17'
 
       # Formatação padrão: falha se algum .tf não estiver como o terraform fmt deixaria.
       - name: Formatação
