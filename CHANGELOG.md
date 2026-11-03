@@ -6,6 +6,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 ### Adicionado
 - Fase 4 (início) — Terraform: bootstrap do bucket de state (S3 com lock nativo), VPC com subnets públicas e de dados, repositórios ECR por serviço e role de deploy do GitHub Actions via OIDC (`infra/terraform`).
 - CI valida o Terraform (`fmt`, `validate`).
+- Fase 4 (banco e segredos) — RDS PostgreSQL 18 em subnet isolada, security groups e Secrets Manager com senhas geradas pelo Terraform.
+- Senha do banco opcional em `Database:Password` (Catalog e Ordering), para receber só a senha do Secrets Manager.
 
 ## [1.1.0] - 2026-11-02
 ### Adicionado
