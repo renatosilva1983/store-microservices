@@ -201,7 +201,7 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 - **Frase:** "Só o gateway é exposto pelo load balancer; os serviços se encontram por service discovery e só aceitam tráfego interno."
 
 ### ADR-28 · Dados e mensageria com economia de crédito
-- **RDS PostgreSQL** (instância pequena) com **um banco por serviço** e usuários separados: o isolamento lógico do Database per Service se mantém; em produção seriam instâncias separadas.
+- **RDS PostgreSQL** (instância pequena) com **um banco por serviço**: o isolamento lógico do Database per Service se mantém; em produção seriam instâncias (ou ao menos usuários) separados. Detalhes no ADR-40.
 - **RabbitMQ como task Fargate** em vez de Amazon MQ (custo bem menor). Sem persistência durável — aceitável para demonstração; em produção: Amazon MQ ou Amazon SQS/SNS.
 - **Frase:** "Mantive banco por serviço como isolamento lógico numa instância RDS e o RabbitMQ em container, por custo; em produção usaria instâncias separadas e Amazon MQ ou SQS."
 
@@ -241,6 +241,20 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 - **Escolha:** role `gha-store-deploy` assumida pelo GitHub Actions via OIDC, aceita só para `repo:renatosilva1983/store-microservices:ref:refs/heads/main` (StringEquals, sem curinga). Permissão inicial: push nos repositórios ECR do projeto; ECS e S3 entram com esses recursos. O provedor OIDC da conta é lido, não criado, porque já existe e é compartilhado com outro projeto.
 - **Porquê:** nenhuma chave da AWS guardada no GitHub; as credenciais são temporárias (1 hora). Restringir repositório e branch impede que um fork ou uma branch qualquer publique. Só a `main`, que no Git Flow é o que passou por release, chega na nuvem.
 - **Frase:** "O pipeline troca o token do GitHub por credenciais temporárias; a role só aceita a branch main deste repositório e só pode fazer o que o deploy precisa."
+
+### ADR-39 · Segredos gerados pelo Terraform, num secret JSON
+- **Escolha:** o Terraform gera a senha do banco, a chave JWT e a senha do RabbitMQ (`random_password`) e grava as três num único secret do **Secrets Manager**, em JSON. A task do ECS recebe cada chave como variável de ambiente ao subir. Para isso, as APIs aceitam a senha do banco separada da conexão (`Database:Password`): a conexão-base (`POSTGRES_CONNECTION`) deixa de ter segredo.
+- **Porquê:** ninguém digita, copia ou vê o segredo; nada fica no repositório, na imagem ou na definição da task. Um secret com várias chaves custa um quarto de quatro secrets.
+- **Cuidado assumido:** os valores ficam no state do Terraform, que por isso é criptografado e privado (ADR-35).
+- **Descartado neste ambiente:** senha do master gerenciada pelo próprio RDS (`manage_master_user_password`), que gira a senha a cada 7 dias: em produção é melhor, mas uma task que já subiu continuaria com a senha antiga até ser reiniciada. Também ficam para depois os argumentos *write-only* do Terraform 1.11+ (segredo que nem chega ao state) e a autenticação no banco por IAM.
+- **Frase:** "Os segredos nascem no Terraform, vão para o Secrets Manager e chegam à aplicação como variável de ambiente na subida da task. Ninguém conhece a senha do banco, nem eu."
+
+### ADR-40 · RDS PostgreSQL pequeno, isolado e descartável
+- **Escolha:** uma instância `db.t4g.micro`, PostgreSQL 18 (igual ao local), disco gp3 de 20 GB criptografado, nas subnets de dados, sem acesso público; o security group só aceita a porta 5432 vinda do security group das tasks. Os bancos `catalog` e `ordering` são criados pelas migrations na subida de cada serviço.
+- **Porquê:** o menor custo que ainda é um PostgreSQL gerenciado (backup, patch e criptografia pela AWS). A origem da regra é outro security group, não uma faixa de IP: vale para qualquer task, mesmo com IPs que mudam a cada deploy.
+- **Simplificações de demo:** sem Multi-AZ, backup de 1 dia, sem snapshot final e sem proteção contra exclusão, para o `destroy` ser rápido. Um usuário master para os dois bancos.
+- **Em produção:** Multi-AZ, backups de 7 dias ou mais, `deletion_protection`, um usuário por serviço com acesso só ao próprio banco e, com mais carga, instâncias separadas.
+- **Frase:** "O banco fica numa subnet sem saída para a internet e só aceita conexão do security group dos serviços. Para a demo desliguei Multi-AZ e proteção contra exclusão; em produção, ligaria os dois e daria um usuário por serviço."
 
 ### Controle de custo (operacional)
 - Alerta no **AWS Budgets** antes do primeiro deploy; conferir validade e cobertura dos créditos.
