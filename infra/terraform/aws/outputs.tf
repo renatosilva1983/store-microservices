@@ -19,3 +19,8 @@ output "github_deploy_role_arn" {
   description = "Vai no secret/variável AWS_DEPLOY_ROLE_ARN do repositório no GitHub."
   value       = aws_iam_role.github_deploy.arn
 }
+
+output "app_secret_arn" {
+  description = "Secret com as chaves PostgresPassword, JwtSigningKey e RabbitMqPassword."
+  value       = aws_secretsmanager_secret.app.arn
+}
