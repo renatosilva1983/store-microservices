@@ -212,13 +212,35 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 
 ### ADR-30 · Configuração, segredos e logs
 - Segredos (connection strings, chave JWT) no **Secrets Manager / SSM Parameter Store**, injetados na task — nada de segredo no repositório ou na imagem.
-- Logs dos containers no **CloudWatch Logs** (Serilog em JSON). Health check do ALB apontando para `/health`.
+- Logs dos containers no **CloudWatch Logs**, em JSON pelo logging nativo do .NET (ADR da Fase 3, sem Serilog). Health check do ALB apontando para `/health`.
 - **Frase:** "Configuração vem do ambiente e segredos do Secrets Manager — a mesma imagem roda local e na nuvem (princípio do Twelve-Factor App)."
 
 ### ADR-31 · Infraestrutura como código + CI/CD
 - **Terraform** descrevendo VPC, ECR, ECS, ALB, RDS, S3/CloudFront. **Porquê:** recriar e destruir tudo com um comando (economiza crédito) e é a ferramenta de IaC mais pedida no mercado. Alternativa válida: AWS CDK em C#.
 - **GitHub Actions com OIDC** (sem chave de acesso guardada): build → testes → push no ECR → atualização do serviço ECS só do serviço alterado.
 - **Frase:** "A infraestrutura é código: com Terraform subo e destruo o ambiente inteiro. O pipeline usa OIDC, sem credencial fixa, e publica só o serviço que mudou."
+
+### ADR-35 · State remoto do Terraform no S3, com bootstrap separado
+- **Escolha:** o state fica num bucket S3 versionado, criptografado, sem acesso público e com `prevent_destroy`; o lock usa `use_lockfile` (arquivo de lock no próprio S3, Terraform 1.11+). O bucket é criado por um módulo `bootstrap` à parte, o único com state local.
+- **Porquê:** o state é a memória do Terraform. Local, ele se perde ou diverge entre a máquina e o pipeline; no S3 é compartilhado, tem histórico e o lock impede dois applies ao mesmo tempo. O bootstrap resolve o "ovo e a galinha": o Terraform não pode guardar o state num bucket que ele ainda vai criar.
+- **Descartado:** tabela DynamoDB para lock (era o padrão até o Terraform 1.10; hoje é recurso a mais sem ganho); HCP Terraform (bom, mas outra conta e outro serviço para um projeto de estudo).
+- **Frase:** "O state fica no S3 com versionamento e lock nativo; o bucket vem de um bootstrap separado, e o destroy do ambiente nunca apaga o state."
+
+### ADR-36 · Duas camadas de subnet e sem NAT Gateway
+- **Escolha:** VPC própria (10.20.0.0/16) em duas zonas de disponibilidade: subnets **públicas** para ALB e tasks; subnets **de dados** sem rota para a internet, só para o RDS. O security group padrão da VPC fica sem regras.
+- **Porquê:** o banco fica isolado de verdade, sem caminho de saída. O NAT Gateway custaria uns US$ 32 por mês só por existir, mais que o resto da rede; as tasks nas subnets públicas resolvem a saída para a internet, e o security group de cada uma só aceita o ALB ou os outros serviços. Duas zonas porque o ALB e o RDS exigem.
+- **Em produção:** tasks em subnets privadas, com NAT Gateway ou VPC Endpoints (ECR, Secrets Manager, CloudWatch).
+- **Frase:** "Banco em subnet isolada, sem rota para a internet. Tirei o NAT por custo e compensei com security groups fechados; em produção as tasks iriam para subnets privadas."
+
+### ADR-37 · ECR com tag imutável e limpeza automática
+- **Escolha:** um repositório por serviço; tag = SHA do commit, **imutável**; scan de vulnerabilidades no push; lifecycle policy que mantém as 10 imagens mais recentes.
+- **Porquê:** tag imutável garante que `catalog-api:3f2a1c9` é sempre o mesmo código: rastreabilidade e rollback seguro (voltar é apontar para a tag anterior). `latest` muda sem aviso e não diz o que está rodando. A lifecycle policy evita pagar por imagens velhas.
+- **Frase:** "Cada imagem tem como tag o commit que a gerou, e a tag não pode ser sobrescrita: sei exatamente o que está em produção e volto uma versão sem rebuild."
+
+### ADR-38 · Role de deploy com OIDC e menor privilégio
+- **Escolha:** role `gha-store-deploy` assumida pelo GitHub Actions via OIDC, aceita só para `repo:renatosilva1983/store-microservices:ref:refs/heads/main` (StringEquals, sem curinga). Permissão inicial: push nos repositórios ECR do projeto; ECS e S3 entram com esses recursos. O provedor OIDC da conta é lido, não criado, porque já existe e é compartilhado com outro projeto.
+- **Porquê:** nenhuma chave da AWS guardada no GitHub; as credenciais são temporárias (1 hora). Restringir repositório e branch impede que um fork ou uma branch qualquer publique. Só a `main`, que no Git Flow é o que passou por release, chega na nuvem.
+- **Frase:** "O pipeline troca o token do GitHub por credenciais temporárias; a role só aceita a branch main deste repositório e só pode fazer o que o deploy precisa."
 
 ### Controle de custo (operacional)
 - Alerta no **AWS Budgets** antes do primeiro deploy; conferir validade e cobertura dos créditos.
