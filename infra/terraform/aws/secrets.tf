@@ -1,7 +1,7 @@
 # Segredos do ambiente (ADR-30 e ADR-39)
 #
 # O Terraform gera os valores e guarda num único secret do Secrets Manager, em JSON.
-# Na Fase 4.3 a task do ECS recebe cada chave como variável de ambiente
+# Na etapa do ECS, a task recebe cada chave como variável de ambiente
 # (ex.: Database__Password ← PostgresPassword), lida no momento em que a task sobe.
 # Nenhum segredo fica no repositório, na imagem Docker ou na definição da task.
 #

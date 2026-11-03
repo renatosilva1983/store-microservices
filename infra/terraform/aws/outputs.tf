@@ -24,3 +24,12 @@ output "app_secret_arn" {
   description = "Secret com as chaves PostgresPassword, JwtSigningKey e RabbitMqPassword."
   value       = aws_secretsmanager_secret.app.arn
 }
+
+output "database_endpoint" {
+  description = "Host do PostgreSQL, usado na variável POSTGRES_CONNECTION das tasks."
+  value       = aws_db_instance.main.address
+}
+
+output "services_security_group_id" {
+  value = aws_security_group.services.id
+}
