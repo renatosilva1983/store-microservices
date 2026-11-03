@@ -34,6 +34,7 @@ store-microservices/
 │  └─ Web/store-web                 (Angular)
 ├─ tests/  Catalog.UnitTests | Ordering.UnitTests | (Catalog.IntegrationTests)
 ├─ docs/   decisoes-arquitetura.md
+├─ infra/terraform/   bootstrap (state) | aws (ambiente da Fase 4)
 ├─ docker-compose.yml
 └─ .github/workflows/ci.yml
 ```
@@ -68,7 +69,8 @@ store-microservices/
 - Gateway roteia `/graphql`; Angular passa a usar GraphQL na listagem de produtos (Apollo Angular ou `HttpClient` com POST simples). Criar/editar/excluir continuam em REST.
 - **Aceite:** listagem do front via GraphQL trazendo só os campos usados; REST e GraphQL retornam os mesmos dados; testes dos handlers seguem verdes.
 
-### Fase 4 — Deploy na AWS (opcional, depois da Fase 3) — ADR-26 a ADR-31
+### Fase 4 — Deploy na AWS (opcional, depois da Fase 3) — ADR-26 a ADR-31 e ADR-35 a ADR-38
+- Como aplicar: [infra/terraform/README.md](infra/terraform/README.md).
 - Terraform: VPC (subnets públicas, sem NAT), ECR por serviço, cluster ECS com Service Connect, serviços Fargate (Gateway, Catalog, Ordering, Identity, RabbitMQ), ALB na frente do Gateway, RDS PostgreSQL (um banco por serviço), S3 + CloudFront para o Angular, Secrets Manager, CloudWatch Logs.
 - GitHub Actions com OIDC: build, testes, push no ECR e deploy só do serviço alterado; publicação do front no S3 com invalidação do CloudFront.
 - Antes de tudo: alerta no AWS Budgets. Depois da demo: tasks a zero ou `terraform destroy`.

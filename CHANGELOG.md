@@ -3,6 +3,9 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
+### Adicionado
+- Fase 4 (início) — Terraform: bootstrap do bucket de state (S3 com lock nativo), VPC com subnets públicas e de dados, repositórios ECR por serviço e role de deploy do GitHub Actions via OIDC (`infra/terraform`).
+- CI valida o Terraform (`fmt`, `validate`).
 
 ## [1.1.0] - 2026-11-02
 ### Adicionado
