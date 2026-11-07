@@ -11,7 +11,8 @@ using Ordering.Application.Orders.Queries;
 
 namespace Ordering.Api.Controllers;
 
-// Todo o serviço de pedidos exige login.
+// Todo o serviço de pedidos exige login; quem pode ver ou cancelar cada pedido
+// é decidido na Application (OrderAccess): o dono ou o administrador.
 [Authorize]
 [Route("api/orders")]
 public sealed class OrdersController : ApiController
@@ -55,8 +56,6 @@ public sealed class OrdersController : ApiController
         CancellationToken cancellationToken)
     {
         var command = new CreateOrderCommand(
-            request.CustomerName,
-            request.CustomerEmail,
             request.ShippingMethod,
             (request.Items ?? []).Select(item => new CreateOrderItem(item.ProductId, item.Quantity)).ToList());
 

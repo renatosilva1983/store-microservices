@@ -1,8 +1,10 @@
 namespace Ordering.Api.Contracts;
 
+/// <summary>
+/// Sem nome nem e-mail do cliente: quem compra é o usuário do token.
+/// Aceitar esses campos aqui deixaria alguém criar pedido em nome de outra pessoa.
+/// </summary>
 public sealed record CreateOrderRequest(
-    string CustomerName,
-    string CustomerEmail,
     string ShippingMethod,
     IReadOnlyList<CreateOrderItemRequest> Items);
 

@@ -12,11 +12,14 @@ namespace Ordering.Infrastructure.Persistence.Queries;
 /// </summary>
 internal sealed class OrderQueries(OrderingDbContext context) : IOrderQueries
 {
-    public async Task<OrderResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<OrderResponse?> GetByIdAsync(Guid id, string? customerId, CancellationToken cancellationToken)
     {
+        // WHERE id = @id [AND customer_id = @customerId]: o banco só devolve o pedido se for do usuário.
         var order = await context.Orders
             .AsNoTracking()
-            .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+            .Where(o => o.Id == id)
+            .Where(o => customerId == null || o.CustomerId == customerId)
+            .FirstOrDefaultAsync(cancellationToken);
 
         return order is null ? null : ToResponse(order);
     }
@@ -26,6 +29,11 @@ internal sealed class OrderQueries(OrderingDbContext context) : IOrderQueries
         CancellationToken cancellationToken)
     {
         var query = context.Orders.AsNoTracking();
+
+        if (filter.CustomerId is not null)
+        {
+            query = query.Where(order => order.CustomerId == filter.CustomerId);
+        }
 
         if (!string.IsNullOrWhiteSpace(filter.CustomerEmail))
         {

@@ -1,5 +1,6 @@
 using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Application.Results;
+using BuildingBlocks.Application.Security;
 using BuildingBlocks.Contracts.Orders;
 using NSubstitute;
 using Ordering.Application.Abstractions;
@@ -22,16 +23,22 @@ public class CreateOrderCommandHandlerTests
     private readonly IOrderRepository _orders = Substitute.For<IOrderRepository>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
     private readonly IIntegrationEventPublisher _events = Substitute.For<IIntegrationEventPublisher>();
+    private readonly ICurrentUser _user = Substitute.For<ICurrentUser>();
     private readonly CreateOrderCommandHandler _handler;
 
     public CreateOrderCommandHandlerTests()
     {
         var shipping = new ShippingCalculator([new StandardShipping(), new ExpressShipping(), new PickupInStoreShipping()]);
-        _handler = new CreateOrderCommandHandler(_catalog, shipping, _orders, _unitOfWork, _events, TimeProvider.System);
+        _handler = new CreateOrderCommandHandler(_catalog, shipping, _orders, _unitOfWork, _events, _user, TimeProvider.System);
+
+        // Usuário logado: o dono do pedido vem daqui, não do comando.
+        _user.Id.Returns("renato@example.com");
+        _user.Email.Returns("renato@example.com");
+        _user.Name.Returns("Renato");
     }
 
     private static CreateOrderCommand Command(int quantity = 1, string shipping = "express") =>
-        new("Renato", "renato@example.com", shipping, [new CreateOrderItem(Notebook.Id, quantity)]);
+        new(shipping, [new CreateOrderItem(Notebook.Id, quantity)]);
 
     [Fact]
     public async Task Handle_WithAvailableProduct_CreatesOrderWithCatalogPriceAndShipping()
@@ -42,6 +49,7 @@ public class CreateOrderCommandHandlerTests
 
         result.IsSuccess.ShouldBeTrue();
         _orders.Received(1).Add(Arg.Is<Order>(order =>
+            order.CustomerId == "renato@example.com" &&
             order.Subtotal == 8000m &&
             order.ShippingMethod == ShippingMethod.Express &&
             order.ShippingCost == 49m &&
@@ -57,8 +65,6 @@ public class CreateOrderCommandHandlerTests
     {
         _catalog.GetProductAsync(Notebook.Id, Arg.Any<CancellationToken>()).Returns(Result.Success(Notebook));
         var command = new CreateOrderCommand(
-            "Renato",
-            "renato@example.com",
             "standard",
             [new CreateOrderItem(Notebook.Id, 3), new CreateOrderItem(Notebook.Id, 3)]);
 
@@ -91,5 +97,16 @@ public class CreateOrderCommandHandlerTests
         result.Error.Type.ShouldBe(ErrorType.Unavailable);
         await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
         await _events.DidNotReceive().PublishAsync(Arg.Any<OrderCreatedIntegrationEvent>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WithoutAuthenticatedUser_ReturnsFailureAndDoesNotSave()
+    {
+        _user.Id.Returns((string?)null);
+
+        var result = await _handler.Handle(Command(), CancellationToken.None);
+
+        result.Error.Code.ShouldBe("Order.Unauthenticated");
+        _orders.DidNotReceive().Add(Arg.Any<Order>());
     }
 }

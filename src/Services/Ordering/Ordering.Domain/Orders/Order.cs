@@ -12,15 +12,17 @@ namespace Ordering.Domain.Orders;
 public sealed class Order : Entity
 {
     public const string DefaultCurrency = "BRL";
+    public const int CustomerIdMaxLength = 200;
     public const int CustomerNameMaxLength = 150;
     public const int CustomerEmailMaxLength = 200;
     public const int MaxQuantityPerItem = 100;
 
     private readonly List<OrderItem> _items = [];
 
-    private Order(Guid id, string customerName, string customerEmail, DateTime createdAtUtc)
+    private Order(Guid id, string customerId, string customerName, string customerEmail, DateTime createdAtUtc)
         : base(id)
     {
+        CustomerId = customerId;
         CustomerName = customerName;
         CustomerEmail = customerEmail;
         CreatedAtUtc = createdAtUtc;
@@ -32,10 +34,17 @@ public sealed class Order : Entity
     // EF Core
     private Order()
     {
+        CustomerId = string.Empty;
         CustomerName = string.Empty;
         CustomerEmail = string.Empty;
         Currency = DefaultCurrency;
     }
+
+    /// <summary>
+    /// Dono do pedido: o identificador do usuário que veio no token (claim sub).
+    /// É por ele que a API decide quem pode ver e cancelar o pedido.
+    /// </summary>
+    public string CustomerId { get; private set; }
 
     public string CustomerName { get; private set; }
 
@@ -61,8 +70,13 @@ public sealed class Order : Entity
 
     public int TotalQuantity => _items.Sum(item => item.Quantity);
 
-    public static Order Create(string customerName, string customerEmail, DateTime createdAtUtc)
+    public static Order Create(string customerId, string customerName, string customerEmail, DateTime createdAtUtc)
     {
+        if (string.IsNullOrWhiteSpace(customerId) || customerId.Length > CustomerIdMaxLength)
+        {
+            throw new DomainException("Order.InvalidCustomerId", "Customer id is required and must be short.");
+        }
+
         if (string.IsNullOrWhiteSpace(customerName) || customerName.Trim().Length > CustomerNameMaxLength)
         {
             throw new DomainException("Order.InvalidCustomerName", "Customer name is required and must be short.");
@@ -73,7 +87,7 @@ public sealed class Order : Entity
             throw new DomainException("Order.InvalidCustomerEmail", "Customer e-mail is required and must be short.");
         }
 
-        return new Order(Guid.NewGuid(), customerName.Trim(), customerEmail.Trim().ToLowerInvariant(), createdAtUtc);
+        return new Order(Guid.NewGuid(), customerId, customerName.Trim(), customerEmail.Trim().ToLowerInvariant(), createdAtUtc);
     }
 
     public void AddItem(Guid productId, string productName, string sku, decimal unitPrice, int quantity)

@@ -5,12 +5,11 @@ using Ordering.Domain.Orders;
 namespace Ordering.Application.Orders.Create;
 
 /// <summary>
-/// O cliente informa só produto e quantidade. Nome e preço vêm do Catálogo,
+/// O cliente informa só produto, quantidade e frete. Nome e preço vêm do Catálogo,
 /// nunca do cliente (senão qualquer um compraria pelo preço que quisesse).
+/// Pelo mesmo motivo, o dono do pedido vem do token, não do corpo da requisição.
 /// </summary>
 public sealed record CreateOrderCommand(
-    string CustomerName,
-    string CustomerEmail,
     string ShippingMethod,
     IReadOnlyList<CreateOrderItem> Items) : ICommand<Guid>;
 
@@ -22,9 +21,6 @@ public sealed class CreateOrderCommandValidator : AbstractValidator<CreateOrderC
 
     public CreateOrderCommandValidator()
     {
-        RuleFor(command => command.CustomerName).NotEmpty().MaximumLength(Order.CustomerNameMaxLength);
-        RuleFor(command => command.CustomerEmail).NotEmpty().EmailAddress().MaximumLength(Order.CustomerEmailMaxLength);
-
         RuleFor(command => command.ShippingMethod)
             .NotEmpty()
             .IsEnumName(typeof(ShippingMethod), caseSensitive: false)

@@ -9,7 +9,7 @@ public class OrderTests
     private static readonly Guid Mouse = Guid.NewGuid();
     private static readonly DateTime Now = new(2026, 11, 1, 15, 0, 0, DateTimeKind.Utc);
 
-    private static Order NewOrder() => Order.Create("Renato", "Renato@Example.com", Now);
+    private static Order NewOrder() => Order.Create("renato@example.com", "Renato", "Renato@Example.com", Now);
 
     [Fact]
     public void Create_NormalizesEmailAndStartsPending()

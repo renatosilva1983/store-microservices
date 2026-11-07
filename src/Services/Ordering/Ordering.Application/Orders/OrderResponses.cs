@@ -31,4 +31,4 @@ public sealed record OrderSummaryResponse(
     int ItemCount,
     DateTime CreatedAtUtc);
 
-public sealed record OrderFilter(string? CustomerEmail, int Page, int PageSize);
+public sealed record OrderFilter(string? CustomerId, string? CustomerEmail, int Page, int PageSize);

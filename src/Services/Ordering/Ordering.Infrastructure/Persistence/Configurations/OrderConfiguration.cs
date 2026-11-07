@@ -14,6 +14,7 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasKey(order => order.Id);
         builder.Property(order => order.Id).ValueGeneratedNever();
 
+        builder.Property(order => order.CustomerId).HasMaxLength(Order.CustomerIdMaxLength).IsRequired();
         builder.Property(order => order.CustomerName).HasMaxLength(Order.CustomerNameMaxLength).IsRequired();
         builder.Property(order => order.CustomerEmail).HasMaxLength(Order.CustomerEmailMaxLength).IsRequired();
 
@@ -28,6 +29,7 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Ignore(order => order.TotalQuantity);
         builder.HasIndex(order => order.CustomerEmail);
+        builder.HasIndex(order => order.CustomerId); // toda consulta de cliente filtra pelo dono
 
         // Itens fazem parte do agregado: owned collection, salvos e carregados junto com o pedido.
         builder.OwnsMany(order => order.Items, items =>
