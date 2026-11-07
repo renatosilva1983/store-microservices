@@ -3,6 +3,11 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
+### Segurança
+- Pedidos com dono (`CustomerId` do token): o cliente vê e cancela só os próprios pedidos; o admin vê todos; pedido de outro usuário responde 404 (proteção contra BOLA/IDOR). Nome e e-mail do cliente saíram do corpo do `POST /api/orders`.
+- Gateway com rate limiting (login e APIs), headers de segurança, HSTS e CORS restrito.
+- CI com verificação de dependências vulneráveis (NuGet e npm), CodeQL e Dependabot.
+
 ### Adicionado
 - Fase 4 (início) — Terraform: bootstrap do bucket de state (S3 com lock nativo), VPC com subnets públicas e de dados, repositórios ECR por serviço e role de deploy do GitHub Actions via OIDC (`infra/terraform`).
 - CI valida o Terraform (`fmt`, `validate`).
