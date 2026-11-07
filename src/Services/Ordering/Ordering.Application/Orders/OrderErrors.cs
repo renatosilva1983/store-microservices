@@ -4,6 +4,9 @@ namespace Ordering.Application.Orders;
 
 public static class OrderErrors
 {
+    public static readonly Error Unauthenticated =
+        Error.Failure("Order.Unauthenticated", "An authenticated customer is required to place an order.");
+
     public static Error NotFound(Guid id) =>
         Error.NotFound("Order.NotFound", $"Order '{id}' was not found.");
 

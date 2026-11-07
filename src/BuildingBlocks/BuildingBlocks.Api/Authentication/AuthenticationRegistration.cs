@@ -1,4 +1,5 @@
 using System.Text;
+using BuildingBlocks.Application.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,6 +59,11 @@ public static class AuthenticationRegistration
             });
 
         services.AddAuthorization();
+
+        // Quem é o usuário da requisição, para os casos de uso (ex.: dono do pedido).
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
+
         return services;
     }
 }

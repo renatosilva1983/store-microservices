@@ -1,5 +1,6 @@
 using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Application.Results;
+using BuildingBlocks.Application.Security;
 using BuildingBlocks.Contracts.Orders;
 using Ordering.Application.Abstractions;
 using Ordering.Application.Shipping;
@@ -19,12 +20,23 @@ public sealed class CreateOrderCommandHandler(
     IOrderRepository orders,
     IUnitOfWork unitOfWork,
     IIntegrationEventPublisher eventPublisher,
+    ICurrentUser currentUser,
     TimeProvider timeProvider)
     : ICommandHandler<CreateOrderCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        var order = Order.Create(command.CustomerName, command.CustomerEmail, timeProvider.GetUtcNow().UtcDateTime);
+        // O endpoint exige login; a checagem aqui protege o caso de uso de qualquer outra borda.
+        if (currentUser.Id is null || currentUser.Email is null)
+        {
+            return Result.Failure<Guid>(OrderErrors.Unauthenticated);
+        }
+
+        var order = Order.Create(
+            currentUser.Id,
+            currentUser.Name ?? currentUser.Email,
+            currentUser.Email,
+            timeProvider.GetUtcNow().UtcDateTime);
 
         // Mesmo produto em linhas diferentes vira uma linha só, com a quantidade somada.
         var requestedItems = command.Items

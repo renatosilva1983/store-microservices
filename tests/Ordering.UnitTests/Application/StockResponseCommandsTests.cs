@@ -12,7 +12,7 @@ public class StockResponseCommandsTests
 
     private Order PendingOrder()
     {
-        var order = Order.Create("Renato", "renato@example.com", DateTime.UtcNow);
+        var order = Order.Create("renato@example.com", "Renato", "renato@example.com", DateTime.UtcNow);
         order.AddItem(Guid.NewGuid(), "Mouse", "MS-001", 100m, 1);
         _orders.GetByIdAsync(order.Id, Arg.Any<CancellationToken>()).Returns(order);
         return order;
