@@ -213,6 +213,11 @@ namespace Ordering.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -243,6 +248,8 @@ namespace Ordering.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerEmail");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("orders", "ordering");
                 });
