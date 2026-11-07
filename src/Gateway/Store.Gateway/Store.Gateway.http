@@ -8,3 +8,14 @@ GET {{gateway}}/api/catalog/categories
 
 ### Pedidos pelo Gateway (caminho repassado sem mudança)
 GET {{gateway}}/api/orders
+
+### Rate limiting no login: envie 6 vezes seguidas em menos de 1 minuto.
+### A partir da 6ª, a resposta é 429 com Retry-After (o limite fica em RateLimiting:LoginPerMinute).
+POST {{gateway}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "cliente@store.dev", "password": "senha-errada" }
+
+### Headers de segurança: veja na resposta X-Content-Type-Options, X-Frame-Options,
+### Referrer-Policy e Content-Security-Policy, e a ausência do header Server.
+GET {{gateway}}/api/catalog/products
