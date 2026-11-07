@@ -29,6 +29,7 @@ Modelo: **Git Flow simplificado** (ADR-33), com versionamento semântico por fas
 | 3 | `1.0.0` | Eventos, JWT e acabamento — sistema completo |
 | 3.5 | `1.1.0` | GraphQL no Catálogo |
 | 4 | `1.2.0` | Deploy na AWS |
+| 5 | `1.3.0` | Segurança de aplicação |
 
 ## Branches planejadas
 

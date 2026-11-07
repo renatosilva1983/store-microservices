@@ -262,6 +262,29 @@ Ordering.Api ──evento PedidoCriado──► RabbitMQ ──► Catalog.Api (
 
 ---
 
+## PARTE 4.5 — Segurança de aplicação
+
+### ADR-41 · Proteções de borda no Gateway
+- **Escolha:** no Gateway, que é a única porta de entrada: **rate limiting** por IP (5 tentativas de login por minuto; 300 requisições por minuto nas APIs), resposta **429** com `Retry-After`; **headers de segurança** em toda resposta (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, CSP `frame-ancestors`); remoção de `Server` e `X-Powered-By`; **HSTS** fora de desenvolvimento; **CORS** só com os métodos e headers que o front usa.
+- **Porquê:** o que vale para todas as APIs fica num lugar só. O limite no login barra força bruta (OWASP A07); o limite geral barra consumo excessivo de recursos (OWASP API4). Headers que revelam a tecnologia facilitam a vida de quem procura uma falha conhecida.
+- **Cuidado:** atrás do ALB, o IP do cliente vem no `X-Forwarded-For`. Isso só é ligado por configuração (`ForwardedHeaders:Enabled`): confiar nesse header sem um proxy na frente deixaria qualquer um escolher o próprio IP e escapar do limite.
+- **Em produção:** o limite também no WAF (camada de rede) e por usuário, além de por IP; bloqueio temporário da conta após falhas seguidas.
+- **Em resumo:** "O Gateway concentra as proteções de borda: limite de tentativas no login contra força bruta, limite geral contra abuso, headers de segurança e nada que revele a tecnologia."
+
+### ADR-42 · Pedido com dono: proteção contra BOLA/IDOR
+- **Escolha:** o pedido guarda o `CustomerId` (claim `sub` do token). Nome e e-mail do cliente também vêm do token e saíram do corpo da requisição. A regra de acesso fica em `OrderAccess`: o cliente vê e cancela só os próprios pedidos, o `admin` vê todos. Na leitura, o filtro de dono vai na própria consulta; pedido de outro usuário responde **404**, como se não existisse. O usuário chega aos casos de uso pela porta `ICurrentUser`, implementada na borda HTTP.
+- **Porquê:** BOLA (*Broken Object Level Authorization*), o antigo IDOR, é a falha número 1 da lista OWASP API Security: a API confere que você está logado, mas não que o registro é seu, e basta trocar o id na URL. O 404 não revela que o pedido existe. Tirar o cliente do corpo fecha também o *mass assignment* (OWASP API3): ninguém cria pedido em nome de outra pessoa.
+- **Por que `ICurrentUser`:** o caso de uso pergunta "quem é o usuário?" sem conhecer HTTP (Ports and Adapters); nos testes, é um mock.
+- **Em resumo:** "Estar logado não basta: o pedido tem dono, e o dono vem do token. Pedido de outra pessoa responde 404. A regra está num lugar só e tem teste que prova que o cliente A não lê o pedido do cliente B."
+
+### ADR-43 · Segurança no pipeline (DevSecOps)
+- **Escolha:** no CI, **SCA** (`dotnet list package --vulnerable --include-transitive` e `npm audit`), quebrando o build em vulnerabilidade alta ou crítica; **SAST** com **CodeQL** (regras `security-extended`) para C# e TypeScript, em push, PR e uma vez por semana; **Dependabot** com PRs agrupados para NuGet, npm, GitHub Actions, imagens Docker e Terraform; **secret scanning** com *push protection* ligado nas configurações do repositório.
+- **Porquê:** segurança contínua, não pontual (*shift-left*): a falha aparece no PR, quando corrigir é barato. SCA pega a biblioteca vulnerável, inclusive as transitivas; SAST pega o padrão perigoso no código (ex.: SQL concatenado); o secret scanning barra o segredo antes de entrar no histórico.
+- **Ferramentas de mercado equivalentes:** SonarQube (SAST e qualidade), Snyk (SCA), Checkmarx (SAST corporativo). Aqui, as gratuitas do GitHub cobrem o mesmo papel.
+- **Em resumo:** "O pipeline barra dependência com vulnerabilidade alta, roda análise estática de segurança e o Dependabot abre PR quando sai correção. A segurança é verificada a cada PR, não só numa auditoria."
+
+---
+
 ## PARTE 5 — Processo
 
 ### ADR-34 · Central Package Management
