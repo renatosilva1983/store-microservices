@@ -1,0 +1,48 @@
+# Dependabot: abre PRs de atualização quando sai versão nova ou quando uma dependência
+# ganha uma vulnerabilidade conhecida (CVE). Cada PR passa pelo CI antes do merge.
+# Atualizações agrupadas por ecossistema para não virar uma enxurrada de PRs.
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    groups:
+      nuget:
+        patterns: ['*']
+
+  - package-ecosystem: npm
+    directory: /src/Web/store-web
+    target-branch: develop
+    schedule:
+      interval: weekly
+    groups:
+      angular:
+        patterns: ['@angular/*', '@angular-devkit/*', '@schematics/*']
+      npm:
+        patterns: ['*']
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: docker
+    directories:
+      - /src/Gateway/Store.Gateway
+      - /src/Services/Catalog/Catalog.Api
+      - /src/Services/Ordering/Ordering.Api
+      - /src/Services/Identity/Identity.Api
+    target-branch: develop
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: terraform
+    directories:
+      - /infra/terraform/aws
+      - /infra/terraform/bootstrap
+    target-branch: develop
+    schedule:
+      interval: monthly

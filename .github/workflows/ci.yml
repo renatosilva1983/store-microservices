@@ -21,6 +21,16 @@ jobs:
       - name: Restore
         run: dotnet restore store-server.slnx
 
+      # Segurança das dependências (SCA): lista pacotes NuGet com vulnerabilidade conhecida,
+      # inclusive os transitivos, e quebra o build se houver alguma alta ou crítica.
+      - name: Dependências vulneráveis (NuGet)
+        run: |
+          dotnet list store-server.slnx package --vulnerable --include-transitive 2>&1 | tee vulnerable.txt
+          if grep -qE '\b(High|Critical)\b' vulnerable.txt; then
+            echo "::error::Há pacote com vulnerabilidade alta ou crítica (veja a lista acima)."
+            exit 1
+          fi
+
       - name: Build
         run: dotnet build store-server.slnx --no-restore -c Release
 
@@ -51,6 +61,10 @@ jobs:
 
       - name: Instalar dependências
         run: npm ci
+
+      # Mesma verificação no front: só dependências que vão para produção, a partir de "high".
+      - name: Dependências vulneráveis (npm)
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Build de produção
         run: npm run build

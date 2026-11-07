@@ -1,0 +1,41 @@
+# Análise estática de segurança (SAST) com CodeQL: procura no código padrões como
+# SQL concatenado, XSS, segredo fixo e desserialização insegura. Os achados aparecem
+# na aba Security → Code scanning do repositório, com o caminho do dado até o ponto perigoso.
+name: CodeQL
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: '23 6 * * 1' # toda segunda: regras novas pegam código antigo
+
+permissions:
+  contents: read
+  security-events: write # publicar os achados na aba Security
+
+jobs:
+  analyze:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: csharp
+            build-mode: none # análise sem compilar: mais rápida e suficiente para o C#
+          - language: javascript-typescript
+            build-mode: none
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-extended # conjunto de regras de segurança mais completo
+
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:${{ matrix.language }}
