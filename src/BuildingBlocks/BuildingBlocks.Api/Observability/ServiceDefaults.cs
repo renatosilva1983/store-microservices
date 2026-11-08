@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,9 @@ public static class ServiceDefaults
 
     public static WebApplicationBuilder AddServiceDefaults(this WebApplicationBuilder builder)
     {
+        // Nenhum serviço anuncia a tecnologia no header "Server" (OWASP A05).
+        builder.WebHost.ConfigureKestrel(kestrel => kestrel.AddServerHeader = false);
+
         builder.Services.AddProblemDetails();
         builder.Services.AddHealthChecks();
 

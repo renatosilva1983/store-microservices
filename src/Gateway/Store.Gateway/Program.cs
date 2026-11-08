@@ -21,6 +21,10 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddGatewaySecurity(builder.Configuration);
 
+// O header "Server: Kestrel" é escrito pelo próprio servidor, depois do pipeline:
+// só some desligando na configuração do Kestrel.
+builder.WebHost.ConfigureKestrel(kestrel => kestrel.AddServerHeader = false);
+
 builder.Services.AddHealthChecks();
 
 builder.Services
