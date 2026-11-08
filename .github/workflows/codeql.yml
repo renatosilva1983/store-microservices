@@ -18,6 +18,9 @@ permissions:
 jobs:
   analyze:
     name: CodeQL (${{ matrix.language }})
+    # Code scanning é gratuito só em repositório público; no privado exige o GitHub
+    # Advanced Security. Enquanto o repositório for privado, a análise é pulada.
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
