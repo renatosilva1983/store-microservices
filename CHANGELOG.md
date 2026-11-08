@@ -3,6 +3,9 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e versionamento [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
+### Alterado
+- Documentação reescrita como apresentação do projeto: entregas por versão, critérios de aceite e decisões de escopo.
+
 ### Segurança
 - Pedidos com dono (`CustomerId` do token): o cliente vê e cancela só os próprios pedidos; o admin vê todos; pedido de outro usuário responde 404 (proteção contra BOLA/IDOR). Nome e e-mail do cliente saíram do corpo do `POST /api/orders`.
 - Gateway com rate limiting (login e APIs), headers de segurança, HSTS e CORS restrito.
@@ -38,4 +41,4 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e
 - Fase 1 — Catálogo: building blocks (Result, CQRS, decorators), domínio (Product, Category, Money, Sku), casos de uso de produtos e categorias, persistência EF Core + PostgreSQL, API REST com ProblemDetails e Scalar, Docker e testes unitários.
 - Migration inicial do banco do Catálogo.
 - Estrutura inicial da solução em Clean Architecture (Catalog, BuildingBlocks, testes).
-- Documentação: especificação por fase (README), decisões de arquitetura (ADRs) e fluxo de Git.
+- Documentação: README, decisões de arquitetura (ADRs) e fluxo de Git.
