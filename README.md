@@ -1,7 +1,15 @@
 # store-microservices
 
-Loja em **microsserviços .NET 10 + Angular 22**, com Clean Architecture, DDD, CQRS, mensageria e API Gateway.
-Decisões e justificativas: [docs/decisoes-arquitetura.md](docs/decisoes-arquitetura.md).
+Plataforma de e-commerce em **microsserviços .NET 10 + Angular 22**: Catálogo, Pedidos e Identidade, cada um com seu banco, atrás de um API Gateway.
+
+O projeto demonstra, de ponta a ponta, como eu estruturo um sistema distribuído:
+- **Arquitetura:** Clean Architecture por serviço, DDD tático (agregados, value objects), CQRS sem MediatR, Result Pattern e decorators para validação e log.
+- **Integração:** HTTP com resiliência (Polly) quando a resposta precisa ser imediata; eventos no RabbitMQ com Transactional Outbox e consumidor idempotente quando a consistência pode ser eventual.
+- **Front-end:** Angular 22 standalone e zoneless, com signals, facade e formulários reativos tipados; REST para comandos e GraphQL para consultas.
+- **Segurança:** JWT validado em cada serviço, proteção contra BOLA/IDOR, rate limiting e headers de segurança no Gateway, análise de dependências e CodeQL no pipeline.
+- **Entrega:** Docker, CI no GitHub Actions, Git Flow com versionamento semântico e infraestrutura como código (Terraform) para a AWS.
+
+Cada decisão está registrada como ADR, com o problema que resolve e as alternativas descartadas: [docs/decisoes-arquitetura.md](docs/decisoes-arquitetura.md).
 
 ## Arquitetura
 
@@ -14,8 +22,11 @@ flowchart LR
     C --> CDB[(PostgreSQL catalog)]
     O --> ODB[(PostgreSQL ordering)]
     O -- HTTP + Polly --> C
-    O -- PedidoCriado --> R{{RabbitMQ}}
+    I -. JWT .-> W
+    O -- OrderCreated --> R{{RabbitMQ}}
     R --> C
+    C -- StockReserved / StockRejected --> R
+    R --> O
 ```
 
 ## Estrutura
@@ -32,55 +43,32 @@ store-microservices/
 │  │  ├─ BuildingBlocks.Contracts   (eventos de integração)
 │  │  └─ BuildingBlocks.Application (Result, ICommandHandler, IQueryHandler, decorators)
 │  └─ Web/store-web                 (Angular)
-├─ tests/  Catalog.UnitTests | Ordering.UnitTests | (Catalog.IntegrationTests)
+├─ tests/  Catalog.UnitTests | Ordering.UnitTests | smoke (teste de segurança ponta a ponta)
 ├─ docs/   decisoes-arquitetura.md
-├─ infra/terraform/   bootstrap (state) | aws (ambiente da Fase 4)
+├─ infra/terraform/   bootstrap (state) | aws (ambiente na AWS)
 ├─ docker-compose.yml
 └─ .github/workflows/ci.yml
 ```
 
-## Especificação por fase
+## Entregas por versão
 
-### Fase 1 — Catalog.Api
-- Domínio: `Category`, `Product` (Sku e Money como value objects; `DebitStock`, `ChangePrice`).
-- Casos de uso: criar/editar/excluir/obter produto; listar com **filtro por nome e categoria + paginação**; CRUD de categoria.
-- CQRS com handlers próprios; FluentValidation via decorator; Result + ProblemDetails; Swagger.
-- EF Core + PostgreSQL, migrations, seed de categorias.
-- Testes unitários do domínio e dos handlers.
-- Dockerfile multi-stage; compose com Postgres.
-- **Aceite:** `docker compose up` → Swagger do Catalog funcionando com CRUD e paginação; testes verdes.
+O projeto evoluiu em marcos, cada um fechado numa release com tag (detalhes no [CHANGELOG](CHANGELOG.md)).
 
-### Fase 2 — Gateway + Angular + Ordering
-- Gateway YARP roteando `/api/catalog/**` e `/api/orders/**`; CORS para o front.
-- Angular: listagem de produtos (filtro com `debounceTime`, paginação), formulário reativo de criar/editar, exclusão com confirmação; facade + signals; interceptor de erro.
-- Ordering: agregado `Order`/`OrderItem`; criar pedido consultando o Catálogo via `IProductCatalog` → `CatalogHttpAdapter` (Typed HttpClient + resiliência); frete com **Strategy** (keyed services).
-- **Aceite:** front lista/edita produtos pelo gateway; pedido criado com preço vindo do Catálogo; derrubar o Catalog mostra o circuit breaker abrindo nos logs.
+| Versão | Entrega | Principais decisões |
+|---|---|---|
+| `0.1.0` | **Catálogo:** produtos e categorias com CRUD, filtro e paginação | Clean Architecture, DDD tático, CQRS, Result Pattern, decorators (ADR-01 a ADR-22) |
+| `0.2.0` | **Pedidos, Gateway e Angular:** pedido consultando o Catálogo; frete com Strategy; front com listagem e formulário | API Gateway (YARP), HttpClient tipado com Polly, ACL, facade e signals no Angular |
+| `1.0.0` | **Eventos, autenticação e observabilidade:** o pedido baixa o estoque por evento; login com JWT | RabbitMQ + MassTransit com Outbox e Inbox, coreografia, JWT stateless, health checks, correlation id, CI |
+| `1.1.0` | **GraphQL no Catálogo** para as consultas do front | REST para comandos, GraphQL para leitura, sobre os mesmos casos de uso (ADR-32) |
+| *Não publicado* | **Infraestrutura na AWS** em Terraform: rede, ECR, banco e segredos | State remoto com lock, subnets isoladas, OIDC no deploy, Secrets Manager (ADR-26 a ADR-40) |
+| *Não publicado* | **Segurança de aplicação** | BOLA/IDOR, rate limiting, headers, SCA e CodeQL no pipeline (ADR-41 a ADR-43) |
 
-### Fase 3 — Eventos, JWT e acabamento
-- MassTransit + RabbitMQ: `PedidoCriadoIntegrationEvent` → Catalog baixa estoque (consumidor idempotente). Extra: Outbox.
-- Identity.Api emitindo JWT; serviços com `[Authorize]`; interceptor de token e guard no Angular; tela de login.
-- Health checks, Serilog, Correlation Id.
-- CI no GitHub Actions; README final com prints.
-- **Aceite:** criar pedido pelo front reduz o estoque no Catálogo; rotas protegidas exigem login.
-
-### Fase 3.5 — GraphQL no Catálogo (opcional) — ADR-32
-- Hot Chocolate no Catalog.Api: queries de produtos e categorias com filtro, ordenação, paginação por cursor e projeção; DataLoader para categoria (evitar N+1); limite de complexidade.
-- Resolvers chamam os query handlers existentes (nenhuma regra nova na borda). Sem mutations.
-- Gateway roteia `/graphql`; Angular passa a usar GraphQL na listagem de produtos (Apollo Angular ou `HttpClient` com POST simples). Criar/editar/excluir continuam em REST.
-- **Aceite:** listagem do front via GraphQL trazendo só os campos usados; REST e GraphQL retornam os mesmos dados; testes dos handlers seguem verdes.
-
-### Fase 4 — Deploy na AWS (opcional, depois da Fase 3) — ADR-26 a ADR-31 e ADR-35 a ADR-38
-- Como aplicar: [infra/terraform/README.md](infra/terraform/README.md).
-- Terraform: VPC (subnets públicas, sem NAT), ECR por serviço, cluster ECS com Service Connect, serviços Fargate (Gateway, Catalog, Ordering, Identity, RabbitMQ), ALB na frente do Gateway, RDS PostgreSQL (um banco por serviço), S3 + CloudFront para o Angular, Secrets Manager, CloudWatch Logs.
-- GitHub Actions com OIDC: build, testes, push no ECR e deploy só do serviço alterado; publicação do front no S3 com invalidação do CloudFront.
-- Antes de tudo: alerta no AWS Budgets. Depois da demo: tasks a zero ou `terraform destroy`.
-- **Aceite:** front acessível pela URL do CloudFront; criar pedido reduz o estoque também na AWS; push na `main` publica automaticamente; ambiente recriável com `terraform apply`.
-
-### Prioridade do escopo (nesta ordem)
-1. Fase 3.5 (GraphQL), Outbox e Testcontainers
-2. Identity completo → JWT com chave fixa de desenvolvimento
-3. RabbitMQ (manter só HTTP)
-Nunca cortar: Fase 1 completa e o CRUD no Angular — são o núcleo do projeto.
+### Critérios de aceite verificados
+- Catálogo com CRUD, filtro por nome e categoria e paginação, pela API e pelo Angular.
+- Pedido criado com preço vindo do Catálogo; com o Catálogo fora do ar, o circuit breaker abre e a API responde 503.
+- Criar um pedido baixa o estoque no Catálogo por evento, e o pedido passa de `Pending` para `Confirmed` (ou `Cancelled`, sem estoque).
+- Rotas de escrita exigem login; um cliente não lê nem cancela o pedido de outro (`tests/smoke/security-smoke.ps1`).
+- Infraestrutura da AWS criada e destruída com `terraform apply` e `terraform destroy` ([infra/terraform](infra/terraform/README.md)).
 
 ## Como rodar
 
@@ -94,7 +82,7 @@ As APIs leem a variável de ambiente **`POSTGRES_CONNECTION`** com host, porta, 
 ```
 Cada serviço completa com o próprio banco (`catalog`, `ordering`), definido em `Database:Name` no appsettings. Reabra terminal e Visual Studio depois de criar a variável.
 
-### Outros segredos (Fase 3)
+### Outros segredos
 ```powershell
 [Environment]::SetEnvironmentVariable('Jwt__SigningKey', '<frase com 32+ caracteres>', 'User')
 [Environment]::SetEnvironmentVariable('RabbitMq__Password', '<senha do RabbitMQ>', 'User')
@@ -149,4 +137,8 @@ Abre em http://localhost:4200 e conversa com o Gateway em http://localhost:5000.
 dotnet test
 ```
 
-### Documentação
+### Teste de fumaça de segurança
+Com o back-end rodando, confere headers, BOLA/IDOR e rate limiting pelo Gateway:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tests\smoke\security-smoke.ps1
+```
