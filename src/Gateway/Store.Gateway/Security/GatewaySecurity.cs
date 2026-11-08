@@ -95,6 +95,7 @@ public static class GatewaySecurity
 
             // Respostas dos serviços passam pelo YARP com os headers deles: o que revela
             // a tecnologia sai no último momento, antes de a resposta ser enviada.
+            // (O "Server" do próprio Gateway é desligado no Kestrel, em Program.cs.)
             context.Response.OnStarting(() =>
             {
                 headers.Remove("Server");
