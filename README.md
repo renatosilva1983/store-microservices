@@ -10,6 +10,7 @@ O projeto demonstra, de ponta a ponta, como eu estruturo um sistema distribuído
 - **Entrega:** Docker, CI no GitHub Actions, Git Flow com versionamento semântico e infraestrutura como código (Terraform) para a AWS.
 
 Cada decisão está registrada como ADR, com o problema que resolve e as alternativas descartadas: [docs/decisoes-arquitetura.md](docs/decisoes-arquitetura.md).
+Para ir direto ao código de cada recurso: [docs/guia-do-codigo.md](docs/guia-do-codigo.md).
 
 ## Arquitetura
 
@@ -44,7 +45,7 @@ store-microservices/
 │  │  └─ BuildingBlocks.Application (Result, ICommandHandler, IQueryHandler, decorators)
 │  └─ Web/store-web                 (Angular)
 ├─ tests/  Catalog.UnitTests | Ordering.UnitTests | smoke (teste de segurança ponta a ponta)
-├─ docs/   decisoes-arquitetura.md
+├─ docs/   decisoes-arquitetura.md | guia-do-codigo.md | fluxo-git.md
 ├─ infra/terraform/   bootstrap (state) | aws (ambiente na AWS)
 ├─ docker-compose.yml
 └─ .github/workflows/ci.yml
