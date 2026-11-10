@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" font-family="'Segoe UI','DejaVu Sans',Arial,sans-serif" xmlns:c2pa="http://c2pa.org/manifest">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#57606a"/></marker>
+    <marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d1700f"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a7f37"/></marker>
+  </defs>
+  <rect width="1600" height="1000" fill="#ffffff"/>
+  <text x="40" y="52" font-size="30" font-weight="700" fill="#0b3d66">store-microservices</text>
+  <text x="40" y="82" font-size="16" fill="#57606a">Arquitetura de microsserviços · .NET 10 + Angular 22</text>
+
+  <!-- Angular -->
+  <rect x="40" y="310" width="240" height="130" rx="12" fill="#e6f6f4" stroke="#1b8a7a" stroke-width="2"/>
+  <text x="160" y="345" text-anchor="middle" font-size="19" font-weight="700" fill="#0f5d52">Angular 22</text>
+  <text x="160" y="372" text-anchor="middle" font-size="13" fill="#24292f">standalone · zoneless · signals</text>
+  <text x="160" y="392" text-anchor="middle" font-size="13" fill="#24292f">facade · interceptors · guard</text>
+  <text x="160" y="414" text-anchor="middle" font-size="13" fill="#24292f">REST + GraphQL</text>
+
+  <!-- Front -> Gateway -->
+  <path d="M280 375 H326" stroke="#57606a" stroke-width="2.5" fill="none" marker-end="url(#a)"/>
+  <text x="304" y="364" text-anchor="middle" font-size="12" fill="#57606a">HTTPS</text>
+
+  <!-- Gateway -->
+  <rect x="330" y="290" width="270" height="170" rx="12" fill="#f1ecfb" stroke="#6f42c1" stroke-width="2"/>
+  <text x="465" y="324" text-anchor="middle" font-size="19" font-weight="700" fill="#4a2a8a">API Gateway (YARP)</text>
+  <text x="465" y="352" text-anchor="middle" font-size="13" fill="#24292f">porta única para o front</text>
+  <text x="465" y="374" text-anchor="middle" font-size="13" fill="#24292f">rate limiting · headers de segurança</text>
+  <text x="465" y="396" text-anchor="middle" font-size="13" fill="#24292f">CORS · roteamento por caminho</text>
+  <text x="465" y="436" text-anchor="middle" font-size="12" fill="#6e7781">sem regra de negócio</text>
+
+  <!-- Gateway -> services -->
+  <path d="M600 330 C650 330 645 145 696 145" stroke="#57606a" stroke-width="2" fill="none" marker-end="url(#a)"/>
+  <path d="M600 375 H696" stroke="#57606a" stroke-width="2" fill="none" marker-end="url(#a)"/>
+  <path d="M600 420 C650 420 645 675 696 675" stroke="#57606a" stroke-width="2" fill="none" marker-end="url(#a)"/>
+  <text x="690" y="132" text-anchor="end" font-size="12" fill="#57606a">/api/auth</text>
+  <text x="690" y="365" text-anchor="end" font-size="12" fill="#57606a">/api/catalog</text>
+  <text x="690" y="698" text-anchor="end" font-size="12" fill="#57606a">/api/orders</text>
+
+  <!-- Identity -->
+  <rect x="700" y="95" width="300" height="110" rx="12" fill="#eaf2fb" stroke="#0969da" stroke-width="2"/>
+  <text x="850" y="128" text-anchor="middle" font-size="19" font-weight="700" fill="#0b3d66">Identity.Api</text>
+  <text x="850" y="155" text-anchor="middle" font-size="13" fill="#24292f">login e emissão do JWT</text>
+  <text x="850" y="177" text-anchor="middle" font-size="12" fill="#6e7781">cada serviço valida o token sozinho</text>
+
+  <!-- Catalog -->
+  <rect x="700" y="300" width="300" height="150" rx="12" fill="#eaf2fb" stroke="#0969da" stroke-width="2"/>
+  <text x="850" y="333" text-anchor="middle" font-size="19" font-weight="700" fill="#0b3d66">Catalog.Api</text>
+  <text x="850" y="360" text-anchor="middle" font-size="13" fill="#24292f">produtos, categorias e estoque</text>
+  <text x="850" y="382" text-anchor="middle" font-size="13" fill="#24292f">REST (comandos) · GraphQL (consultas)</text>
+  <text x="850" y="404" text-anchor="middle" font-size="13" fill="#24292f">DDD · CQRS · Result Pattern</text>
+  <text x="850" y="430" text-anchor="middle" font-size="12" fill="#6e7781">consome OrderCreated e baixa o estoque</text>
+
+  <!-- Ordering -->
+  <rect x="700" y="600" width="300" height="150" rx="12" fill="#eaf2fb" stroke="#0969da" stroke-width="2"/>
+  <text x="850" y="633" text-anchor="middle" font-size="19" font-weight="700" fill="#0b3d66">Ordering.Api</text>
+  <text x="850" y="660" text-anchor="middle" font-size="13" fill="#24292f">pedidos com dono (proteção BOLA)</text>
+  <text x="850" y="682" text-anchor="middle" font-size="13" fill="#24292f">frete com Strategy · Outbox</text>
+  <text x="850" y="704" text-anchor="middle" font-size="13" fill="#24292f">Pending → Confirmed / Cancelled</text>
+  <text x="850" y="730" text-anchor="middle" font-size="12" fill="#6e7781">consistência eventual</text>
+
+  <!-- HTTP + Polly -->
+  <path d="M760 600 V454" stroke="#1a7f37" stroke-width="2.5" fill="none" marker-end="url(#g)"/>
+  <text x="772" y="522" font-size="13" font-weight="600" fill="#1a7f37">HTTP + Polly</text>
+  <text x="772" y="540" font-size="12" fill="#1a7f37">preço e estoque · retry · circuit breaker</text>
+
+  <!-- DBs -->
+  <g>
+    <path d="M1080 340 v80 a85 16 0 0 0 170 0 v-80" fill="#f6f8fa" stroke="#57606a" stroke-width="2"/>
+    <ellipse cx="1165" cy="340" rx="85" ry="16" fill="#eef1f4" stroke="#57606a" stroke-width="2"/>
+    <text x="1165" y="388" text-anchor="middle" font-size="15" font-weight="700" fill="#24292f">PostgreSQL</text>
+    <text x="1165" y="408" text-anchor="middle" font-size="13" fill="#57606a">banco catalog</text>
+  </g>
+  <path d="M1000 380 H1076" stroke="#57606a" stroke-width="2" fill="none" marker-end="url(#a)"/>
+  <g>
+    <path d="M1080 640 v80 a85 16 0 0 0 170 0 v-80" fill="#f6f8fa" stroke="#57606a" stroke-width="2"/>
+    <ellipse cx="1165" cy="640" rx="85" ry="16" fill="#eef1f4" stroke="#57606a" stroke-width="2"/>
+    <text x="1165" y="688" text-anchor="middle" font-size="15" font-weight="700" fill="#24292f">PostgreSQL</text>
+    <text x="1165" y="708" text-anchor="middle" font-size="13" fill="#57606a">banco ordering</text>
+  </g>
+  <path d="M1000 680 H1076" stroke="#57606a" stroke-width="2" fill="none" marker-end="url(#a)"/>
+  <text x="1165" y="770" text-anchor="middle" font-size="12" fill="#6e7781">um banco por serviço</text>
+
+  <!-- RabbitMQ -->
+  <rect x="1330" y="465" width="230" height="130" rx="12" fill="#fff4e5" stroke="#d1700f" stroke-width="2"/>
+  <text x="1445" y="500" text-anchor="middle" font-size="19" font-weight="700" fill="#9a4a00">RabbitMQ</text>
+  <text x="1445" y="526" text-anchor="middle" font-size="13" fill="#24292f">MassTransit</text>
+  <text x="1445" y="548" text-anchor="middle" font-size="13" fill="#24292f">Outbox · Inbox · retry</text>
+  <text x="1445" y="570" text-anchor="middle" font-size="13" fill="#24292f">fila _error</text>
+
+  <!-- events -->
+  <path d="M940 454 V495 H1326" stroke="#d1700f" stroke-width="2.5" fill="none" marker-start="url(#o)" marker-end="url(#o)"/>
+  <text x="1150" y="468" text-anchor="middle" font-size="12" fill="#9a4a00">Catálogo consome OrderCreated</text><text x="1150" y="485" text-anchor="middle" font-size="12" fill="#9a4a00">e publica StockReserved / StockRejected</text>
+  <path d="M940 596 V565 H1326" stroke="#d1700f" stroke-width="2.5" fill="none" marker-start="url(#o)" marker-end="url(#o)"/>
+  <text x="1150" y="583" text-anchor="middle" font-size="12" fill="#9a4a00">Pedidos publica OrderCreated</text><text x="1150" y="600" text-anchor="middle" font-size="12" fill="#9a4a00">e consome StockReserved / StockRejected</text>
+
+  <!-- bottom panels -->
+  <rect x="40" y="820" width="490" height="150" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="60" y="850" font-size="15" font-weight="700" fill="#0b3d66">Dentro de cada serviço: Clean Architecture</text>
+  <g font-size="13" text-anchor="middle">
+    <rect x="60" y="878" width="96" height="44" rx="8" fill="#fff" stroke="#0969da"/><text x="108" y="905" fill="#24292f">Api</text>
+    <rect x="180" y="878" width="110" height="44" rx="8" fill="#fff" stroke="#0969da"/><text x="235" y="905" fill="#24292f">Application</text>
+    <rect x="314" y="878" width="90" height="44" rx="8" fill="#dbe9fb" stroke="#0969da" stroke-width="2"/><text x="359" y="905" font-weight="700" fill="#0b3d66">Domain</text>
+    <rect x="428" y="878" width="92" height="44" rx="8" fill="#fff" stroke="#0969da"/><text x="474" y="905" fill="#24292f">Infra</text>
+  </g>
+  <path d="M156 900 H176" stroke="#57606a" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M290 900 H310" stroke="#57606a" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M428 900 H408" stroke="#57606a" stroke-width="2" marker-end="url(#a)"/>
+  <text x="60" y="952" font-size="12" fill="#6e7781">as dependências apontam para dentro; o Domain não conhece EF nem HTTP</text>
+
+  <rect x="555" y="820" width="490" height="150" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="575" y="850" font-size="15" font-weight="700" fill="#0b3d66">Qualidade e entrega</text>
+  <text x="575" y="878" font-size="13" fill="#24292f">• CI no GitHub Actions: build, 68 testes, build do Angular</text>
+  <text x="575" y="900" font-size="13" fill="#24292f">• Dependências vulneráveis quebram o build · CodeQL · Dependabot</text>
+  <text x="575" y="922" font-size="13" fill="#24292f">• Docker multi-stage e docker-compose</text>
+  <text x="575" y="944" font-size="13" fill="#24292f">• Git Flow com releases e versionamento semântico</text>
+
+  <rect x="1070" y="820" width="490" height="150" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="1090" y="850" font-size="15" font-weight="700" fill="#0b3d66">Na AWS (Terraform)</text>
+  <text x="1090" y="878" font-size="13" fill="#24292f">• ECS Fargate por serviço, imagens no ECR</text>
+  <text x="1090" y="900" font-size="13" fill="#24292f">• RDS PostgreSQL em subnet isolada</text>
+  <text x="1090" y="922" font-size="13" fill="#24292f">• Secrets Manager · deploy via OIDC, sem chave fixa</text>
+  <text x="1090" y="944" font-size="13" fill="#24292f">• State remoto no S3 · sobe e desce com um comando</text>
+<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTo0MTY3YTNmNy1kMGY2LTQzM2ItYTgzMi04MjdhNTIyMWY2ODUAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaDtzJwzKnaRud949Z+zkcjAAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDpiM2Y3YzVhNS0zMWU4LTQ5NjAtYjljOC02MmMyNDc5M2QwZDZscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNo/DS0FlXY1SrnGpxUffuSBgAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggoL4FdopNZec2YLuCbdcDdPN3rvq6gJhPGxuqaYsVChSkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaBZ9X9C2MgPVZlMg32ZM8gQAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIE61Yzu72oGYJyyOjx3UBY63TUulO1mBKRsFDDTXsPZqZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GSgyZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjQxNjdhM2Y3LWQwZjYtNDMzYi1hODMyLTgyN2E1MjIxZjY4NS9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmEzNTNhNDlkLWYzZTYtNGJiYy1hMmFjLTg1YWU1NTQ1NjNlYXJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCCgvgV2ik1l5zZgu4Jt1wN083eu+rqAmE8bG6ppixUKFKJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggPH5y04DNj3C5yWlPD1l7LFTlU1vK5gU87r+4f2yhwNuiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggDVPmoDuUDCTdLJ5MRfcyICWL+j0Hl5rln/ptHQ5Pbst0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQK7MPedaHy+ye6EFz/pROmBbBQ/8l1BoB0/mD0C/ONPz+qSzK4nsBZIXXQhcn5rzSwF0GUJnirRtPdoj/nLVpjE=</c2pa:manifest></metadata></svg>

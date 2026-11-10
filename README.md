@@ -14,6 +14,10 @@ Para ir direto ao código de cada recurso: [docs/guia-do-codigo.md](docs/guia-do
 
 ## Arquitetura
 
+![Arquitetura do store-microservices](docs/arquitetura.png)
+
+Versão simplificada do fluxo:
+
 ```mermaid
 flowchart LR
     W[Angular 22] --> G[Gateway YARP]
